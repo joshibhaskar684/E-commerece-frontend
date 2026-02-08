@@ -1,5 +1,6 @@
 
 import "./globals.css";
+import ReduxProvider from './../redux-store/ReduxProvider/ReduxProvider';
 
 
 export const metadata = {
@@ -13,7 +14,9 @@ export default function RootLayout({ children }) {
       <body
         className={` antialiased`}
       >
+        <ReduxProvider>
         {children}
+        </ReduxProvider>
       </body>
     </html>
   );

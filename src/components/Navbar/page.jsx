@@ -16,14 +16,18 @@ import {
   TabPanels,
 } from '@headlessui/react'
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { navigation } from './navigation'
+import { navigation } from './components/navigation'
+import { useRouter } from 'next/navigation'
+import SearchBar from './components/SearchBar'
 
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false)
-
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
+  
   return (
-    <div className="bg-white">
+    <>
+    <div className="bg-background text-foreground ">
       {/* Mobile menu */}
       <Dialog open={open} onClose={setOpen} className="relative z-40 lg:hidden">
         <DialogBackdrop
@@ -33,13 +37,13 @@ export default function Navbar() {
         <div className="fixed inset-0 z-40 flex">
           <DialogPanel
             transition
-            className="relative flex w-full max-w-xs transform flex-col overflow-y-auto bg-white pb-12 shadow-xl transition duration-300 ease-in-out data-closed:-translate-x-full"
+            className="relative flex w-full max-w-xs transform flex-col overflow-y-auto bg-background text-foreground  pb-12 shadow-xl transition duration-300 ease-in-out data-closed:-translate-x-full"
           >
             <div className="flex px-4 pt-5 pb-2">
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
+                className="relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-foreground"
               >
                 <span className="absolute -inset-0.5" />
                 <span className="sr-only">Close menu</span>
@@ -48,13 +52,13 @@ export default function Navbar() {
             </div>
 
             {/* Links */}
-            <TabGroup className="mt-2">
+            {/* <TabGroup className="mt-2">
               <div className="border-b border-gray-200">
                 <TabList className="-mb-px flex space-x-8 px-4">
                   {navigation.categories.map((category) => (
                     <Tab
                       key={category.name}
-                      className="flex-1 border-b-2 border-transparent px-1 py-4 text-base font-medium whitespace-nowrap text-gray-900 data-selected:border-indigo-600 data-selected:text-indigo-600"
+                      className="flex-1 border-b-2 border-transparent px-1 py-4 text-base font-medium whitespace-nowrap text-foreground data-selected:border-indigo-600 data-selected:text-indigo-600"
                     >
                       {category.name}
                     </Tab>
@@ -70,9 +74,9 @@ export default function Navbar() {
                           <img
                             alt={item.imageAlt}
                             src={item.imageSrc}
-                            className="aspect-square w-full rounded-lg bg-gray-100 object-cover group-hover:opacity-75"
+                            className="aspect-square w-full rounded-lg bg-background text-foreground  object-cover group-hover:opacity-75"
                           />
-                          <a href={item.href} className="mt-6 block font-medium text-gray-900">
+                          <a href={item.href} className="mt-6 block font-medium text-foreground ">
                             <span aria-hidden="true" className="absolute inset-0 z-10" />
                             {item.name}
                           </a>
@@ -84,7 +88,7 @@ export default function Navbar() {
                     </div>
                     {category.sections.map((section) => (
                       <div key={section.name}>
-                        <p id={`${category.id}-${section.id}-heading-mobile`} className="font-medium text-gray-900">
+                        <p id={`${category.id}-${section.id}-heading-mobile`} className="font-medium text-foreground">
                           {section.name}
                         </p>
                         <ul
@@ -94,7 +98,7 @@ export default function Navbar() {
                         >
                           {section.items.map((item) => (
                             <li key={item.name} className="flow-root">
-                              <a href={item.href} className="-m-2 block p-2 text-gray-500">
+                              <a href={item.href} className="-m-2 block p-2 text-foreground">
                                 {item.name}
                               </a>
                             </li>
@@ -105,12 +109,12 @@ export default function Navbar() {
                   </TabPanel>
                 ))}
               </TabPanels>
-            </TabGroup>
+            </TabGroup> */}
 
             <div className="space-y-6 border-t border-gray-200 px-4 py-6">
               {navigation.pages.map((page) => (
                 <div key={page.name} className="flow-root">
-                  <a href={page.href} className="-m-2 block p-2 font-medium text-gray-900">
+                  <a href={page.href} className="-m-2 block p-2 font-medium text-foreground">
                     {page.name}
                   </a>
                 </div>
@@ -119,12 +123,12 @@ export default function Navbar() {
 
             <div className="space-y-6 border-t border-gray-200 px-4 py-6">
               <div className="flow-root">
-                <a href="#" className="-m-2 block p-2 font-medium text-gray-900">
+                <a href="#" className="-m-2 block p-2 font-medium text-foreground">
                   Sign in
                 </a>
               </div>
               <div className="flow-root">
-                <a href="#" className="-m-2 block p-2 font-medium text-gray-900">
+                <a href="#" className="-m-2 block p-2 font-medium text-foreground">
                   Create account
                 </a>
               </div>
@@ -135,7 +139,7 @@ export default function Navbar() {
         </div>
       </Dialog>
 
-      <header className="relative bg-white">
+      <header className="relative bg-background text-foreground ">
         
 
         <nav aria-label="Top" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -144,7 +148,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="relative rounded-md bg-white p-2 text-gray-400 lg:hidden"
+                className="relative rounded-md bg-background text-foreground  p-2 text-foreground lg:hidden"
               >
                 <span className="absolute -inset-0.5" />
                 <span className="sr-only">Open menu</span>
@@ -153,7 +157,7 @@ export default function Navbar() {
 
               {/* Logo */}
               <div className="ml-4 flex lg:ml-0">
-                <a href="#">
+                <a href="/">
                   <span className="sr-only">Your Company</span>
                   <img
                     alt=""
@@ -164,12 +168,12 @@ export default function Navbar() {
               </div>
 
               {/* Flyout menus */}
-              <PopoverGroup className="hidden lg:ml-8 lg:block lg:self-stretch">
+              {/* <PopoverGroup className="hidden lg:ml-8 lg:block lg:self-stretch">
                 <div className="flex h-full space-x-8">
                   {navigation.categories.map((category) => (
                     <Popover key={category.name} className="flex">
                       <div className="relative flex">
-                        <PopoverButton className="group relative flex items-center justify-center text-sm font-medium text-gray-700 transition-colors duration-200 ease-out hover:text-gray-800 data-open:text-indigo-600">
+                        <PopoverButton className="group relative flex items-center justify-center text-sm font-medium text-foreground transition-colors duration-200 ease-out hover:text-foreground data-open:text-indigo-600">
                           {category.name}
                           <span
                             aria-hidden="true"
@@ -179,11 +183,11 @@ export default function Navbar() {
                       </div>
                       <PopoverPanel
                         transition
-                        className="absolute inset-x-0 top-full z-20 w-full bg-white text-sm text-gray-500 transition data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+                        className="absolute inset-x-0 top-full z-20 w-full bg-background text-foreground  text-sm text-foreground transition data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
                       >
-                        {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
-                        <div aria-hidden="true" className="absolute inset-0 top-1/2 bg-white shadow-sm" />
-                        <div className="relative bg-white">
+                        {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow *}
+                        <div aria-hidden="true" className="absolute inset-0 top-1/2 bg-background text-foreground  shadow-sm" />
+                        <div className="relative bg-background text-foreground ">
                           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                             <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-16">
                               <div className="col-start-2 grid grid-cols-2 gap-x-8">
@@ -194,7 +198,7 @@ export default function Navbar() {
                                       src={item.imageSrc}
                                       className="aspect-square w-full rounded-lg bg-gray-100 object-cover group-hover:opacity-75"
                                     />
-                                    <a href={item.href} className="mt-6 block font-medium text-gray-900">
+                                    <a href={item.href} className="mt-6 block font-medium text-foreground">
                                       <span aria-hidden="true" className="absolute inset-0 z-10" />
                                       {item.name}
                                     </a>
@@ -207,7 +211,7 @@ export default function Navbar() {
                               <div className="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm">
                                 {category.sections.map((section) => (
                                   <div key={section.name}>
-                                    <p id={`${section.name}-heading`} className="font-medium text-gray-900">
+                                    <p id={`${section.name}-heading`} className="font-medium text-foreground">
                                       {section.name}
                                     </p>
                                     <ul
@@ -217,7 +221,7 @@ export default function Navbar() {
                                     >
                                       {section.items.map((item) => (
                                         <li key={item.name} className="flex">
-                                          <a href={item.href} className="hover:text-gray-800">
+                                          <a href={item.href} className="hover:text-foreground">
                                             {item.name}
                                           </a>
                                         </li>
@@ -236,21 +240,21 @@ export default function Navbar() {
                     <a
                       key={page.name}
                       href={page.href}
-                      className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800"
+                      className="flex items-center text-sm font-medium text-foreground hover:text-foreground"
                     >
                       {page.name}
                     </a>
                   ))}
                 </div>
-              </PopoverGroup>
+              </PopoverGroup> */}
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <a href="#" className="text-sm font-medium text-gray-700 hover:text-gray-800">
+                  <a href="#" className="text-sm font-medium text-foreground hover:text-foreground">
                     Sign in
                   </a>
                   <span aria-hidden="true" className="h-6 w-px bg-gray-200" />
-                  <a href="#" className="text-sm font-medium text-gray-700 hover:text-gray-800">
+                  <a href="#" className="text-sm font-medium text-foreground hover:text-foreground">
                     Create account
                   </a>
                 </div>
@@ -258,21 +262,21 @@ export default function Navbar() {
                 
 
                 {/* Search */}
-                <div className="flex lg:ml-6">
-                  <a href="#" className="p-2 text-gray-400 hover:text-gray-500">
+                {/* <div className="flex lg:ml-6">
+                  <a href="#" className="p-2 text-foreground hover:text-foreground">
                     <span className="sr-only">Search</span>
                     <MagnifyingGlassIcon aria-hidden="true" className="size-6" />
                   </a>
-                </div>
+                </div> */}
 
                 {/* Cart */}
                 <div className="ml-4 flow-root lg:ml-6">
-                  <a href="#" className="group -m-2 flex items-center p-2">
+                  <a href="#" className="group -m-2 flex items-center p-2" onClick={()=>router.push("/cart")}>
                     <ShoppingBagIcon
                       aria-hidden="true"
-                      className="size-6 shrink-0 text-gray-400 group-hover:text-gray-500"
+                      className="size-6 shrink-0 text-foreground group-hover:text-foreground"
                     />
-                    <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">0</span>
+                    <span className="ml-2 text-sm font-medium text-foreground group-hover:text-foreground">0</span>
                     <span className="sr-only">items in cart, view bag</span>
                   </a>
                 </div>
@@ -282,5 +286,8 @@ export default function Navbar() {
         </nav>
       </header>
     </div>
+    <SearchBar/>
+    </>
+    
   )
 }
