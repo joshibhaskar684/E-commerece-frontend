@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import { FilterIcon } from 'lucide-react'
 
 const products = [
   {
@@ -38,16 +39,17 @@ const products = [
   },
 ]
 
-export default function page() {
-  const [open, setOpen] = useState(true)
-
-  return (
+export default function Filter({ open, setOpen }) {
+   return (
     <div>
+
+        
       <button
         onClick={() => setOpen(true)}
-        className="rounded-md bg-gray-950/5 px-2.5 py-1.5 text-sm font-semibold text-gray-900 hover:bg-gray-950/10"
+        className="rounded-md flex bg-background px-2.5 py-1.5 text-sm font-semibold text-foreground border hover:bg-foreground hover:text-background focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-background gap-2"
       >
-        Open drawer
+        <FilterIcon className="size-5" aria-hidden="true" />
+        Filters
       </button>
       <Dialog open={open} onClose={setOpen} className="relative z-10">
         <DialogBackdrop

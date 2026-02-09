@@ -7,7 +7,7 @@ export default function CategorySection() {
     const router=useRouter();
     return(
         <>
-        <div class="grid grid-cols-3 gap-2 lg:grid-cols-6 mt-10 mb-10">
+        <div className="grid grid-cols-3 cursor-pointer gap-2 lg:grid-cols-6 mt-10 mb-10">
             {
                 CategoryData.map((category)=>{
                     return(
