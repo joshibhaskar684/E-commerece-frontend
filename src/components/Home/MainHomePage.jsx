@@ -1,5 +1,6 @@
 
 
+import Footer from '../Footer/page';
 import CategorySection from './HomeComponent/CategorySection/CategorySection';
 import Collections from './HomeComponent/Collections/Collections';
 import Featured from './HomeComponent/Featured/Featured';
@@ -11,7 +12,8 @@ export default function MainHomePage(){
         <CategorySection/>
         <Featured/>
         <Collections/>
-        <div className='h-[900px]'></div>
+        {/* <div className='h-[900px]'></div> */}
+        <Footer/>
         </>
     )
 }

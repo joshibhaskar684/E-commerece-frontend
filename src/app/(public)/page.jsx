@@ -4,7 +4,7 @@ export default function page(){
     return(
         <>
         <MainHomePage/>
-        <h1>ecoomerec</h1>
+       
         </>
     )
 
