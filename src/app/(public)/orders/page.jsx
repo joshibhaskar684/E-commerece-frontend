@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { FilterIcon } from 'lucide-react'
+import { FaMinus, FaPlus } from 'react-icons/fa'
 
 export default function page(){
     const products = [
@@ -42,61 +43,43 @@ export default function page(){
 ]
     return(
         <>
-
-<div className="flex h-full flex-col overflow-y-auto bg-white shadow-xl">
-                  <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-                    <div className="flex items-start justify-between">
-                      <p className="text-lg font-medium text-gray-900">Shopping cart</p>
-                      <div className="ml-3 flex h-7 items-center">
-                        <button
-                          type="button"
-                          onClick={() => setOpen(false)}
-                          className="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
-                        >
-                          <span className="absolute -inset-0.5" />
-                          <span className="sr-only">Close panel</span>
-                          <XMarkIcon aria-hidden="true" className="size-6" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="mt-8">
-                      <div className="flow-root">
-                        <ul role="list" className="-my-6 divide-y divide-gray-200">
-                          {products.map((product) => (
-                            <li key={product.id} className="flex py-6">
-                              <div className="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                <img alt={product.imageAlt} src={product.imageSrc} className="size-full object-cover" />
-                              </div>
-
-                              <div className="ml-4 flex flex-1 flex-col">
-                                <div>
-                                  <div className="flex justify-between text-base font-medium text-gray-900">
-                                    <h3>
-                                      <a href={product.href}>{product.name}</a>
-                                    </h3>
-                                    <p className="ml-4">{product.price}</p>
-                                  </div>
-                                  <p className="mt-1 text-sm text-gray-500">{product.color}</p>
-                                </div>
-                                <div className="flex flex-1 items-end justify-between text-sm">
-                                  <p className="text-gray-500">Qty {product.quantity}</p>
-
-                                  <div className="flex">
-                                    <button type="button" className="font-medium text-indigo-600 hover:text-indigo-500">
-                                      Remove
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  </div>
-
+        <h1 className='text-foreground p-4 text-3xl font-bold'>
+          Orders
+        </h1>
+  <div className="bg-background text-foreground gap-2   flex flex-col md:flex-row p-10 justify-between">
+      <div className="flex flex-col gap-2 w-full overflow-y-auto h-full">
+        {products.map(product => (
+          <div key={product.id} className="border border-foreground p-2 flex w-full">
+            <img src={product.imageSrc} alt={product.imageAlt} className="w-32 h-32 object-cover" />
+            <div className="p-2 flex flex-col overflow-hidden gap-2 flex-1">
+              <p className="line-clamp-1 font-semibold">{product.name}</p>
+              <p className="line-clamp-1">{product.price}</p>
+              <div className="flex flex-col gap-2 md:flex-row justify-between mt-auto">
+                <div className="flex flex-row gap-4 items-center">
+                  <FaPlus
+                    className="text-foreground cursor-pointer border border-foreground p-1 rounded"
+                    size={20}
+                    onClick={() => handleQuantity(product.id, 'inc')}
+                  />
+                  <p>{product.quantity}</p>
+                  <FaMinus
+                    className="text-foreground cursor-pointer border border-foreground p-1 rounded"
+                    size={20}
+                    onClick={() => handleQuantity(product.id, 'dec')}
+                  />
+                </div>
+                <div
+                  className="border bg-foreground text-background border-foreground p-1 cursor-pointer line-clamp-1 text-center"
+                  onClick={() => handleRemove(product.id)}
+                >
+                  Remove
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+</div>
         </>
     )
 }
