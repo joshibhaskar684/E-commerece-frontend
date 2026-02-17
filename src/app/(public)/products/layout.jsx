@@ -3,9 +3,7 @@ import Sidebar from "@/components/Products/Sidebar/Sidebar";
 export default function layout({ children }) {
     return (
         <>
-        <div className="sticky top-20 z-1 bg-background">
-           <Sidebar/>
-            </div>
+       
                     {children}
                 
 

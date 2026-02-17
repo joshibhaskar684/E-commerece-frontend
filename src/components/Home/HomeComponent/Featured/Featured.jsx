@@ -8,7 +8,7 @@ export default function Featured(){
                 {
                     FeaturedData.map((product)=>{
                         return(
-                            <a key={product.id} className="flex border border-yellow-400 h-full w-full rounded-md flex-col items-center justify-center gap-2 p-4" href={product.path}>
+                            <a key={product.id} className="flex border border-3 border-yellow-400 h-full w-full rounded-md flex-col items-center justify-center gap-2 p-4" href={product.path}>
                                 <img alt={product.name} src={product.image}  className="w-40 h-40  rounded-md" />
                                  <span className="text-sm font-sm">{product.name}</span>
                             </a>

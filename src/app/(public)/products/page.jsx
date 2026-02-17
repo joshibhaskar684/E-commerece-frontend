@@ -1,3 +1,5 @@
+import Sidebar from "@/components/Products/Sidebar/Sidebar"
+
 const products = [
   {
     id: 1,
@@ -73,7 +75,7 @@ const products = [
   },{
     id: 10,
     name: 'Focus Carry Pouch',
-    href: '#',
+    href: '/products/10',
     price: '$32',
     imageSrc: 'https://tailwindcss.com/plus-assets/img/ecommerce-images/category-page-04-image-card-08.jpg',
     imageAlt: 'Textured gray felt pouch for paper cards with snap button flap and elastic pen holder loop.',
@@ -83,6 +85,9 @@ const products = [
 export default function page() {
   return (
     <div className="bg-background ">
+       <div className="sticky top-32 z-1 bg-background">
+                 <Sidebar/>
+                  </div>
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <h2 className="sr-only">Products</h2>
 

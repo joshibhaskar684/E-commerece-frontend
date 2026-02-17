@@ -8,7 +8,7 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="relative text-white bg-yellow-300 border-t border-foreground">
+    <footer className="relative text-white bg-yellow-300 ">
       {/* Soft Background Glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-blue-500/5 opacity-20 pointer-events-none" />
 
@@ -17,7 +17,7 @@ export default function Footer() {
         {/* Brand */}
         <div className="lg:col-span-1">
           <h2 className="text-2xl font-bold text-foreground roboto-slab">
-            <img src="/QuickLogo.png" alt="logo image   " className='w-[120px] h-[60px] border-white border'></img>
+            <img src="/QuickLogo.png" alt="logo image   " className='w-[120px] h-[60px] '></img>
           </h2>
           <p className="mt-4 text-sm leading-relaxed font-semibold text-white">
            Get Max Product at a Reasonable price and with a Hassle free Experience and better quality.
@@ -124,7 +124,7 @@ function FooterLink({ label, href, external }) {
         rel={external ? 'noopener noreferrer' : undefined}
         className="flex items-center gap-2 text-white hover:text-black font-semibold transition-all"
       >
-        <FaArrowRight className="text-foreground group-hover:translate-x-1 transition-transform duration-200" />
+        <FaArrowRight className="text-white group-hover:translate-x-1 transition-transform duration-200" />
         {label}
       </a>
     </li>
