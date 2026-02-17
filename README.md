@@ -14,9 +14,12 @@
 
 <!-- You can replace these with your actual screenshots -->
 
-![Homepage Screenshot](https://via.placeholder.com/1200x600?text=Homepage+Preview)
-![Product Page Screenshot](https://via.placeholder.com/1200x600?text=Product+Page+Preview)
-![Cart Page Screenshot](https://via.placeholder.com/1200x600?text=Cart+Preview)
+![Homepage Screenshot](https://www.quicksin.in/HomeheroSection.png)
+![Login Page Screenshot](https://www.quicksin.in/LoginPage.png)
+
+![Signup Page Screenshot](https://www.quicksin.in/SignupPage.png)
+![Cart Page Screenshot](https://www.quicksin.in/CartPage.png)
+
 
 ✨ Features
 
