@@ -1,3 +1,5 @@
+
+
 export const UserReducer = (state = { user: null }, action) => {
     switch (action.type) {
       case 'SET_USER':
@@ -6,3 +8,6 @@ export const UserReducer = (state = { user: null }, action) => {
         return state;
     }
 }
+
+
+
