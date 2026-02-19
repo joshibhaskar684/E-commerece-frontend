@@ -58,10 +58,10 @@ export default function Page() {
   )
 
   return (
-    <div className="bg-background text-foreground gap-2   flex flex-col md:flex-row p-10 justify-between">
-      <div className="flex flex-col gap-2 w-full overflow-y-auto h-full">
+    <div className="bg-background text-foreground gap-8   flex flex-col md:flex-row p-10 justify-between">
+      <div className="flex flex-col gap-4 w-full overflow-y-auto h-full">
         {cartProducts.map(product => (
-          <div key={product.id} className="border border-foreground p-2 flex w-full">
+          <div key={product.id} className="border border-foreground/10 bg-foreground/10 p-2 rounded flex w-full">
             <img src={product.imageSrc} alt={product.imageAlt} className="w-32 h-32 object-cover" />
             <div className="p-2 flex flex-col overflow-hidden gap-2 flex-1">
               <p className="line-clamp-1 font-semibold">{product.name}</p>
@@ -81,7 +81,7 @@ export default function Page() {
                   />
                 </div>
                 <div
-                  className="border bg-foreground text-background border-foreground p-1 cursor-pointer line-clamp-1 text-center"
+                  className="border bg-foreground text-background rounded border-foreground p-2 cursor-pointer line-clamp-1 text-center"
                   onClick={() => handleRemove(product.id)}
                 >
                   Remove
@@ -92,7 +92,7 @@ export default function Page() {
         ))}
       </div>
 
-      <div className="border border-foreground p-4 w-full md:w-80 h-fit flex flex-col gap-4">
+      <div className="border rounded border-foreground/10 bg-foreground/10 p-4 w-full md:w-80 h-fit flex flex-col gap-4">
         <p className="text-2xl font-bold">CheckOut</p>
         <div className="flex flex-col gap-2">
           <div className="flex justify-between">
@@ -111,7 +111,7 @@ export default function Page() {
         </div>
         <button
           onClick={handleCheckOut}
-          className={`border border-foreground p-2 mt-4 ${loading ? 'animate-pulse' : ''}`}
+          className={`border border-foreground bg-foreground text-background cursor-pointer rounded p-2 mt-4 ${loading ? 'animate-pulse' : ''}`}
         >
           {loading ? 'Processing...' : 'Checkout'}
         </button>
