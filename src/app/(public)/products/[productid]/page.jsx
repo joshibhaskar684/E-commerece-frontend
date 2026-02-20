@@ -1,13 +1,15 @@
 "use client";
 import Maincarosel from "@/components/Products/productdetailsComponents/HeroSection"
+import ProductListComponent from "@/components/UniversalComponnets/ProductListComponent/ProductListComponent";
 
 import { useState } from "react";
-import { FaLocationArrow, FaMapMarked, FaStore, FaTruckPickup } from "react-icons/fa";
+import { FaCashRegister, FaHeadset, FaLocationArrow, FaMapMarked, FaRecycle, FaRupeeSign, FaStore, FaTimes, FaTimesCircle, FaTruckPickup } from "react-icons/fa";
 const product = {
   id: 1,
   brand: "Realme",
   name: "Realme P2 Pro 5g (Glacier Blue, 128 GB)  (8 GB RAM)",
   images: [
+    "https://media.istockphoto.com/id/1406527082/photo/unboxing-android-smartphone.jpg?s=612x612&w=0&k=20&c=wKEyEv6ZYict-J5Dxc-HUt2Ys524U-dy_cXo-AIalKU=",
     "https://media.istockphoto.com/id/2207778462/photo/supreme-court-of-india-located-in-new-delhi-india.jpg?s=612x612&w=0&k=20&c=MGzVpxie9TfHpKyo6oQNM4i_M6GpJWJ6mT3-MnjcS2c=",
     "https://media.istockphoto.com/id/2210970630/photo/us-tariff-on-india-import-trade-war-cargo-shipping-container.jpg?s=612x612&w=0&k=20&c=LzraUkokMF-QK5dlk0DfLVsAyhUBi0mbd0pCcIPRKgE=",
     "https://media.istockphoto.com/id/1007178836/photo/indian-supreme-court.jpg?s=612x612&w=0&k=20&c=sVUxnP1WCkC62og2fjbzgdUMleD3WoeOzbBgNiJ9y_Y=",
@@ -19,6 +21,8 @@ const product = {
   store: "Rahul Gandhi",
   discount: "10% off",
   rating: 4.5,
+qunatity:"4",
+  return_day: "0",
   reviews: 1000,
   description: "The Realme P2 Pro 5G is a budget-friendly smartphone that offers a powerful performance with its MediaTek Dimensity 920 processor and 8GB of RAM. It features a large 6.43-inch AMOLED display with a high refresh rate, providing a smooth and immersive viewing experience. The phone also boasts a versatile camera setup, including a 64MP main sensor, allowing users to capture stunning photos and videos. With its long-lasting battery and fast charging capabilities, the Realme P2 Pro 5G is an excellent choice for those seeking a feature-packed smartphone at an affordable price.",
   attributes: [
@@ -26,7 +30,128 @@ const product = {
     { key: "Processor", value: "MediaTek Dimensity 920 processor" },
     { key: "Camera", value: "64MP main sensor" },
   ],
+
 }
+const products = [
+  {
+    id: 1,
+    brand: "Samsung",
+    name: "Galaxy S23 Ultra",
+    color: "Phantom Black",
+    price: 109999,
+    image: [
+      "https://media.istockphoto.com/id/1406527082/photo/unboxing-android-smartphone.jpg?s=612x612&w=0&k=20&c=wKEyEv6ZYict-J5Dxc-HUt2Ys524U-dy_cXo-AIalKU="
+    ],
+    imageAlt: "Samsung Galaxy S23 Ultra front view",
+    Original_price: 124999,
+    discount: 12
+  },
+  {
+    id: 2,
+    brand: "Apple",
+    name: "iPhone 14",
+    color: "Midnight",
+    price: 69999,
+    image: [
+      "https://media.istockphoto.com/id/1406527082/photo/unboxing-android-smartphone.jpg?s=612x612&w=0&k=20&c=wKEyEv6ZYict-J5Dxc-HUt2Ys524U-dy_cXo-AIalKU="
+    ],
+    imageAlt: "Apple iPhone 14 front view",
+    Original_price: 79999,
+    discount: 13
+  },
+  {
+    id: 3,
+    brand: "OnePlus",
+    name: "OnePlus 11R",
+    color: "Galactic Silver",
+    price: 39999,
+    image: [
+      "https://media.istockphoto.com/id/1406527082/photo/unboxing-android-smartphone.jpg?s=612x612&w=0&k=20&c=wKEyEv6ZYict-J5Dxc-HUt2Ys524U-dy_cXo-AIalKU="
+    ],
+    imageAlt: "OnePlus 11R front view",
+    Original_price: 44999,
+    discount: 11
+  },
+  {
+    id: 4,
+    brand: "Xiaomi",
+    name: "Redmi Note 13 Pro",
+    color: "Arctic White",
+    price: 24999,
+    image: [
+      "https://media.istockphoto.com/id/1406527082/photo/unboxing-android-smartphone.jpg?s=612x612&w=0&k=20&c=wKEyEv6ZYict-J5Dxc-HUt2Ys524U-dy_cXo-AIalKU="
+    ],
+    imageAlt: "Redmi Note 13 Pro front view",
+    Original_price: 27999,
+    discount: 10
+  },
+  {
+    id: 5,
+    brand: "Realme",
+    name: "Realme GT Neo 3",
+    color: "Nitro Blue",
+    price: 31999,
+    image: [
+      "https://media.istockphoto.com/id/1406527082/photo/unboxing-android-smartphone.jpg?s=612x612&w=0&k=20&c=wKEyEv6ZYict-J5Dxc-HUt2Ys524U-dy_cXo-AIalKU="
+    ],
+    imageAlt: "Realme GT Neo 3 front view",
+    Original_price: 35999,
+    discount: 11
+  },
+  {
+    id: 6,
+    brand: "Vivo",
+    name: "Vivo V29 Pro",
+    color: "Himalayan Blue",
+    price: 38999,
+    image: [
+      "https://media.istockphoto.com/id/1406527082/photo/unboxing-android-smartphone.jpg?s=612x612&w=0&k=20&c=wKEyEv6ZYict-J5Dxc-HUt2Ys524U-dy_cXo-AIalKU="
+    ],
+    imageAlt: "Vivo V29 Pro front view",
+    Original_price: 42999,
+    discount: 9
+  },
+  {
+    id: 7,
+    brand: "Oppo",
+    name: "Oppo Reno 10 Pro",
+    color: "Glossy Purple",
+    price: 36999,
+    image: [
+      "https://media.istockphoto.com/id/1406527082/photo/unboxing-android-smartphone.jpg?s=612x612&w=0&k=20&c=wKEyEv6ZYict-J5Dxc-HUt2Ys524U-dy_cXo-AIalKU="
+    ],
+    imageAlt: "Oppo Reno 10 Pro front view",
+    Original_price: 40999,
+    discount: 10
+  },
+  {
+    id: 8,
+    brand: "Motorola",
+    name: "Moto Edge 40",
+    color: "Eclipse Black",
+    price: 29999,
+    image: [
+      "https://media.istockphoto.com/id/1406527082/photo/unboxing-android-smartphone.jpg?s=612x612&w=0&k=20&c=wKEyEv6ZYict-J5Dxc-HUt2Ys524U-dy_cXo-AIalKU="
+    ],
+    imageAlt: "Moto Edge 40 front view",
+    Original_price: 32999,
+    discount: 9
+  },
+  {
+    id: 9,
+    brand: "Google",
+    name: "Pixel 7",
+    color: "Snow",
+    price: 59999,
+    image: [
+      "https://media.istockphoto.com/id/1406527082/photo/unboxing-android-smartphone.jpg?s=612x612&w=0&k=20&c=wKEyEv6ZYict-J5Dxc-HUt2Ys524U-dy_cXo-AIalKU="
+    ],
+    imageAlt: "Google Pixel 7 front view",
+    Original_price: 64999,
+    discount: 8
+  }
+];
+
 
 export default function page() {
   return (
@@ -72,12 +197,37 @@ export default function page() {
 
 
         </div>
-<div className="bg-foreground/10 mt-10 mb-10">
+        <hr className="text-foreground/10 mt-10" />
+        <div className="grid grid-cols-3 mt-10 mb-10  p-4 rounded-lg text-center">
+          <div className="flex flex-col items-center justify-center gap-2 px-2">
+            <FaRecycle className="text-lg text-foreground" />
+            <p className="text-xs font-semibold leading-tight">
+              {product.return_day}-Day Return
+            </p>
+          </div>
 
-</div>
-        <div className="bg-background p-2 mb-30 ">
-          <div className="md:p-5 ">
-            <h1 className="text-2xl font-extrabold">Description</h1>
+          <div className="flex flex-col items-center justify-center gap-2 px-2">
+            <FaRupeeSign className="text-lg text-foreground" />
+            <p className="text-xs font-semibold leading-tight">
+              Cash on Delivery
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center justify-center gap-2 px-2">
+            <FaHeadset className="text-lg text-foreground" />
+            <p className="text-xs font-semibold leading-tight">
+              24×7 Customer Support
+            </p>
+          </div>
+
+        </div>
+
+        <hr className="text-foreground/10 mt-1" />
+
+
+        <div className="bg-background p-2 mt-10 ">
+          <div className="md:p-5  ">
+            <h1 className="text-2xl font-extrabold">Details</h1>
             <div className="flex flex-col">
               <p className="text-foreground text-sm mt-2 text-justify">{product.description}</p>
               <div>
@@ -96,8 +246,9 @@ export default function page() {
           </div>
         </div>
       </div>
+<ProductListComponent SectionName={"Similar Products"} products={products} Link={"/products/10"} />
 
-
+<ProductListComponent SectionName={"Best Products"} products={products} Link={"/products/10"} />
     </>
   )
 }

@@ -62,7 +62,7 @@ export default function Page() {
       <div className="flex flex-col gap-4 w-full overflow-y-auto h-full">
         {cartProducts.map(product => (
           <div key={product.id} className="border border-foreground/10 bg-foreground/10 p-2 rounded flex w-full">
-            <img src={product.imageSrc} alt={product.imageAlt} className="w-32 h-32 object-cover" />
+            <img src={product.imageSrc} alt={product.imageAlt} className="w-32 h-32 object-cover rounded" />
             <div className="p-2 flex flex-col overflow-hidden gap-2 flex-1">
               <p className="line-clamp-1 font-semibold">{product.name}</p>
               <p className="line-clamp-1">{product.price}</p>
