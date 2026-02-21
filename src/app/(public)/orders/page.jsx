@@ -6,6 +6,7 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { FilterIcon } from 'lucide-react'
 import { FaMinus, FaPlus } from 'react-icons/fa'
+import OrderItemComponent from '@/components/Orders/OrderItemComponent/OrderItemComponents'
 
 export default function page(){
     const products = [
@@ -49,34 +50,7 @@ export default function page(){
   <div className="bg-background text-foreground gap-2   flex flex-col md:flex-row p-10 justify-between">
       <div className="flex flex-col gap-2 w-full overflow-y-auto h-full">
         {products.map(product => (
-          <div key={product.id} className="border border-foreground p-2 flex w-full">
-            <img src={product.imageSrc} alt={product.imageAlt} className="w-32 h-32 object-cover" />
-            <div className="p-2 flex flex-col overflow-hidden gap-2 flex-1">
-              <p className="line-clamp-1 font-semibold">{product.name}</p>
-              <p className="line-clamp-1">{product.price}</p>
-              <div className="flex flex-col gap-2 md:flex-row justify-between mt-auto">
-                <div className="flex flex-row gap-4 items-center">
-                  <FaPlus
-                    className="text-foreground cursor-pointer border border-foreground p-1 rounded"
-                    size={20}
-                    onClick={() => handleQuantity(product.id, 'inc')}
-                  />
-                  <p>{product.quantity}</p>
-                  <FaMinus
-                    className="text-foreground cursor-pointer border border-foreground p-1 rounded"
-                    size={20}
-                    onClick={() => handleQuantity(product.id, 'dec')}
-                  />
-                </div>
-                <div
-                  className="border bg-foreground text-background border-foreground p-1 cursor-pointer line-clamp-1 text-center"
-                  onClick={() => handleRemove(product.id)}
-                >
-                  Remove
-                </div>
-              </div>
-            </div>
-          </div>
+          <OrderItemComponent key={product.id} product={product} />
         ))}
       </div>
 </div>

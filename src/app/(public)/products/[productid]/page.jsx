@@ -1,9 +1,10 @@
 "use client";
 import Maincarosel from "@/components/Products/productdetailsComponents/HeroSection"
 import ProductListComponent from "@/components/UniversalComponnets/ProductListComponent/ProductListComponent";
+import { Rating, Slider } from "@mui/material";
 
 import { useState } from "react";
-import { FaCashRegister, FaHeadset, FaLocationArrow, FaMapMarked, FaRecycle, FaRupeeSign, FaStore, FaTimes, FaTimesCircle, FaTruckPickup } from "react-icons/fa";
+import { FaCashRegister, FaHeadset, FaLocationArrow, FaMapMarked, FaRecycle, FaRupeeSign, FaStar, FaStore, FaTimes, FaTimesCircle, FaTruckPickup } from "react-icons/fa";
 const product = {
   id: 1,
   brand: "Realme",
@@ -19,7 +20,7 @@ const product = {
   price: "₹ 17,999",
   Original_price: "₹ 19,999",
   store: "Rahul Gandhi",
-  discount: "10% off",
+  discount: "10",
   rating: 4.5,
 qunatity:"4",
   return_day: "0",
@@ -170,7 +171,7 @@ export default function page() {
               <div className="flex gap-2 mt-2">
                 <span className="text-sm cursor-pointer px-2 py-1 border border-foreground bg-foreground text-background rounded-full mr-2">{product.color}</span>
               </div>
-              <p className="text-lg font-bold text-foreground mt-2">{product.price} <span className="line-through text-sm font-normal text-gray-500 ml-2">{product.Original_price}</span> <span className="text-green-500 text-sm font-medium ml-2">{product.discount}</span></p>
+              <p className="text-lg font-bold text-foreground mt-2">{product.price} <span className="line-through text-sm font-normal text-gray-500 ml-2">{product.Original_price}</span> <span className="text-green-600 text-sm font-bold ml-2">{product.discount}% OFF</span></p>
               <div className="grid grid-cols-1 mt-4">
                 <h1 className="text-md text-lg font-bold text-foreground "> Delivery Details</h1>
                 <div className=" flex flex-col">
@@ -190,8 +191,8 @@ export default function page() {
 
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-              <button className="bg-background cursor-pointer border hover:bg-foreground hover:text-background font-bold text-foreground px-4 py-2 rounded ">Add to Cart</button>
-              <button className="bg-yellow-500 cursor-pointer text-foreground px-4 py-2 rounded font-bold  border">Buy Now</button>
+              <button className="bg-background cursor-pointer border-foreground/40 border hover:bg-foreground hover:text-background font-bold text-foreground px-4 py-2 rounded ">Add to Cart</button>
+              <button className="bg-yellow-500 cursor-pointer text-foreground px-4 py-2 rounded font-bold border-foreground/40   border">Buy Now</button>
             </div>
           </div>
 
@@ -225,6 +226,8 @@ export default function page() {
         <hr className="text-foreground/10 mt-1" />
 
 
+<ProductListComponent SectionName={"Similar Products"} products={products} Link={"/products/10"} />
+
         <div className="bg-background p-2 mt-10 ">
           <div className="md:p-5  ">
             <h1 className="text-2xl font-extrabold">Details</h1>
@@ -245,8 +248,60 @@ export default function page() {
             </div>
           </div>
         </div>
+
+        <div className="p-2 mt-5 bg-background">
+  <h1 className="font-extrabold text-2xl md:p-5">
+    Rating & Reviews
+  </h1>
+
+  <div className="md:p-5 grid grid-cols-1 md:grid-cols-2 gap-6 py-2">
+
+    {/* Left Side - Overall Rating */}
+    <div className="flex flex-col gap-2">
+      <Rating name="read-only" value={4.2} precision={0.1} readOnly />
+      <p className="text-sm text-muted-foreground">
+        2,000 ratings & 2,000 reviews
+      </p>
+    </div>
+
+    {/* Right Side - Rating Breakdown */}
+    <div className="flex flex-col gap-3">
+      
+      {[5,4,3,2,1].map((star) => (
+        <div key={star} className="flex items-center gap-3">
+          
+          {/* Star Number */}
+          <div className="flex items-center gap-1 w-10">
+            <span>{star}</span>
+            <FaStar className="text-yellow-500 text-sm" />
+          </div>
+
+          {/* Progress Bar */}
+          <div className="flex-1">
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="bg-yellow-500 h-2 rounded-full"
+                 ></div>
+            </div>
+          </div>
+
+          {/* Percentage */}
+          <span className="text-sm text-muted-foreground w-10 text-right">
+            60%
+          </span>
+        </div>
+      ))}
+
+    </div>
+
+ 
+  </div>
+   <div className=" flex items-center justify-center">
+    <button className="bg-background border-foreground/40  cursor-pointer w-full mt-4 border hover:bg-foreground hover:text-background font-bold text-foreground p-4 rounded transition-colors duration-200">View Reviews</button>
+  </div>
+</div>
       </div>
-<ProductListComponent SectionName={"Similar Products"} products={products} Link={"/products/10"} />
+<ProductListComponent SectionName={"Recently Viewed"} products={products} Link={"/products/10"} />
 
 <ProductListComponent SectionName={"Best Products"} products={products} Link={"/products/10"} />
     </>

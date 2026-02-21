@@ -1,5 +1,9 @@
 "use client"
-export default function ProductListComponent({SectionName, products ,Link}) {
+
+import { useRouter } from "next/navigation";
+
+export default function ProductListComponent({SectionName, products ,Links}) {
+  const router=useRouter();
   return (
     <>
 <div className="mt-10 bg-background text-foreground grid grid-cols-1 p-2 md:p-6 ">
@@ -9,18 +13,18 @@ export default function ProductListComponent({SectionName, products ,Link}) {
     {SectionName}
   </h2>
 
-  <a href={Link} className="bg-yellow-500 hover:bg-yellow-600 text-foreground rounded px-3 py-1 text-sm font-semibold transition-colors duration-200">
+  <button onClick={()=>router.push(Links)} className="bg-yellow-500 hover:bg-yellow-600 text-foreground rounded px-3 py-1 text-sm font-semibold transition-colors duration-200">
     View All
-  </a>
+  </button>
 
 </div>
 
    
-      <div className="p-2 grid grid-cols-2 md:grid-cols-5 lg:grid-cols-9 gap-2 border border-foreground/10 rounded">
+      <div className="p-2 grid grid-cols-2 md:grid-cols-5 lg:grid-cols-9 rounded">
 {
     products.map((product,index) => (
 
-        <div className="grid grid-cols-1 cursor-pointer h-full" key={index}>
+        <a href={Links}  className="grid grid-cols-1  border border-foreground/10 p-2  cursor-pointer h-full" key={index}>
   
   <img
     src={product.image[0]}
@@ -30,7 +34,7 @@ export default function ProductListComponent({SectionName, products ,Link}) {
 
   <div className="py-3 flex flex-col h-full">
 
-    <h1 className="text-xs font-bold">
+    <h1 className="text-xs font-bold line-clamp-1">
       {product.brand}
     </h1>
 
@@ -41,23 +45,23 @@ export default function ProductListComponent({SectionName, products ,Link}) {
     {/* Price Section */}
     <div className="mt-2 min-h-[48px]">
       <p className="text-sm font-bold text-foreground flex flex-wrap items-center gap-2 mb-2">
-        <span>₹ {product.price}</span>
+        <span>₹{product.price}</span>
         <span className="line-through text-gray-500 font-normal">
-          ₹ {product.Original_price}
+          ₹{product.Original_price}
         </span>
-        <span className="text-green-500 font-medium whitespace-nowrap">
-          {product.discount}% off
+        <span className="text-green-600 font-bold whitespace-nowrap">
+          {product.discount}% OFF
         </span>
       </p>
     </div>
 
     {/* Button */}
-    <button className="bg-background w-full mt-auto border hover:bg-foreground hover:text-background font-bold text-foreground px-4 py-2 rounded transition-colors duration-200">
+    <button className="bg-background border-foreground/40  cursor-pointer w-full mt-auto border hover:bg-foreground hover:text-background font-bold text-foreground px-4 py-2 rounded transition-colors duration-200">
       Add to Cart
     </button>
 
   </div>
-</div>
+</a>
 
         // <div className="grid grid-cols-1 cursor-pointer  " key={index}>
         //     <img src={product.image[0]}></img>
