@@ -1,38 +1,45 @@
 "use client";
 import Maincarosel from "@/components/Products/productdetailsComponents/HeroSection"
 import ProductListComponent from "@/components/UniversalComponnets/ProductListComponent/ProductListComponent";
+import { getProductDetailsById } from "@/redux-store/products/action";
 import { Rating, Slider } from "@mui/material";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaCashRegister, FaHeadset, FaLocationArrow, FaMapMarked, FaRecycle, FaRupeeSign, FaStar, FaStore, FaTimes, FaTimesCircle, FaTruckPickup } from "react-icons/fa";
-const product = {
-  id: 1,
-  brand: "Realme",
-  name: "Realme P2 Pro 5g (Glacier Blue, 128 GB)  (8 GB RAM)",
-  images: [
-    "https://media.istockphoto.com/id/1406527082/photo/unboxing-android-smartphone.jpg?s=612x612&w=0&k=20&c=wKEyEv6ZYict-J5Dxc-HUt2Ys524U-dy_cXo-AIalKU=",
-    "https://media.istockphoto.com/id/2207778462/photo/supreme-court-of-india-located-in-new-delhi-india.jpg?s=612x612&w=0&k=20&c=MGzVpxie9TfHpKyo6oQNM4i_M6GpJWJ6mT3-MnjcS2c=",
-    "https://media.istockphoto.com/id/2210970630/photo/us-tariff-on-india-import-trade-war-cargo-shipping-container.jpg?s=612x612&w=0&k=20&c=LzraUkokMF-QK5dlk0DfLVsAyhUBi0mbd0pCcIPRKgE=",
-    "https://media.istockphoto.com/id/1007178836/photo/indian-supreme-court.jpg?s=612x612&w=0&k=20&c=sVUxnP1WCkC62og2fjbzgdUMleD3WoeOzbBgNiJ9y_Y=",
-    "https://media.istockphoto.com/id/2200128716/photo/ai-powers-big-data-analysis-and-automation-workflows-showcasing-neural-networks-and-data.jpg?s=612x612&w=0&k=20&c=z7kdn14AJhMX8JlenABkc3mT-df-V0JhxJzqnQ8Q81w="
-  ],
-  color: "Glacier Blue",
-  price: "₹ 17,999",
-  Original_price: "₹ 19,999",
-  store: "Rahul Gandhi",
-  discount: "10",
-  rating: 4.5,
-qunatity:"4",
-  return_day: "0",
-  reviews: 1000,
-  description: "The Realme P2 Pro 5G is a budget-friendly smartphone that offers a powerful performance with its MediaTek Dimensity 920 processor and 8GB of RAM. It features a large 6.43-inch AMOLED display with a high refresh rate, providing a smooth and immersive viewing experience. The phone also boasts a versatile camera setup, including a 64MP main sensor, allowing users to capture stunning photos and videos. With its long-lasting battery and fast charging capabilities, the Realme P2 Pro 5G is an excellent choice for those seeking a feature-packed smartphone at an affordable price.",
-  attributes: [
-    { key: "Display", value: "6.43-inch AMOLED display with a high refresh rate" },
-    { key: "Processor", value: "MediaTek Dimensity 920 processor" },
-    { key: "Camera", value: "64MP main sensor" },
-  ],
+import { useDispatch, useSelector } from "react-redux";
 
-}
+import { useParams } from "next/navigation";
+
+
+// const product = {
+//   id: 1,
+//   brand: "Realme",
+//   name: "Realme P2 Pro 5g (Glacier Blue, 128 GB)  (8 GB RAM)",
+//   images: [
+//     "https://media.istockphoto.com/id/1406527082/photo/unboxing-android-smartphone.jpg?s=612x612&w=0&k=20&c=wKEyEv6ZYict-J5Dxc-HUt2Ys524U-dy_cXo-AIalKU=",
+//     "https://media.istockphoto.com/id/2207778462/photo/supreme-court-of-india-located-in-new-delhi-india.jpg?s=612x612&w=0&k=20&c=MGzVpxie9TfHpKyo6oQNM4i_M6GpJWJ6mT3-MnjcS2c=",
+//     "https://media.istockphoto.com/id/2210970630/photo/us-tariff-on-india-import-trade-war-cargo-shipping-container.jpg?s=612x612&w=0&k=20&c=LzraUkokMF-QK5dlk0DfLVsAyhUBi0mbd0pCcIPRKgE=",
+//     "https://media.istockphoto.com/id/1007178836/photo/indian-supreme-court.jpg?s=612x612&w=0&k=20&c=sVUxnP1WCkC62og2fjbzgdUMleD3WoeOzbBgNiJ9y_Y=",
+//     "https://media.istockphoto.com/id/2200128716/photo/ai-powers-big-data-analysis-and-automation-workflows-showcasing-neural-networks-and-data.jpg?s=612x612&w=0&k=20&c=z7kdn14AJhMX8JlenABkc3mT-df-V0JhxJzqnQ8Q81w="
+//   ],
+//   color: "Glacier Blue",
+//   price: "₹ 17,999",
+//   Original_price: "₹ 19,999",
+//   store: "Rahul Gandhi",
+//   discount: "10",
+//   rating: 4.5,
+// qunatity:"4",
+//   return_day: "0",
+//   reviews: 1000,
+//   description: "The Realme P2 Pro 5G is a budget-friendly smartphone that offers a powerful performance with its MediaTek Dimensity 920 processor and 8GB of RAM. It features a large 6.43-inch AMOLED display with a high refresh rate, providing a smooth and immersive viewing experience. The phone also boasts a versatile camera setup, including a 64MP main sensor, allowing users to capture stunning photos and videos. With its long-lasting battery and fast charging capabilities, the Realme P2 Pro 5G is an excellent choice for those seeking a feature-packed smartphone at an affordable price.",
+//   attributes: [
+//     { key: "Display", value: "6.43-inch AMOLED display with a high refresh rate" },
+//     { key: "Processor", value: "MediaTek Dimensity 920 processor" },
+//     { key: "Camera", value: "64MP main sensor" },
+//   ]
+
+// }
+
 const products = [
   {
     id: 1,
@@ -155,6 +162,139 @@ const products = [
 
 
 export default function page() {
+  const params = useParams();
+  const id = params.productid;
+  const dispatch = useDispatch();
+
+  const store = useSelector((state) => state.ProductReducer);
+
+  const product = store?.data || [];
+
+  useEffect(() => {
+    console.log(id)
+    dispatch(getProductDetailsById({ id }));
+  }, []);
+
+  if (product.length === 0) {
+    return (
+      <>
+        <div className="bg-background grid grid-cols-1 mt-1 animate-pulse">
+
+          {/* Top Section */}
+          <div className="bg-background grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
+
+            {/* Left - Image Skeleton */}
+            <div className="bg-gray-300 w-full h-[400px] rounded-lg" />
+
+            {/* Right - Product Info Skeleton */}
+            <div className="bg-background p-2 flex flex-col space-y-4">
+
+              <div className="h-6 w-40 bg-gray-300 rounded" />
+              <div className="h-6 w-60 bg-gray-200 rounded" />
+
+              <div className="h-8 w-20 bg-gray-300 rounded-full" />
+
+              <div className="h-6 w-48 bg-gray-300 rounded" />
+
+              {/* Delivery Section */}
+              <div className="space-y-3 mt-4">
+                <div className="h-5 w-40 bg-gray-300 rounded" />
+                <div className="h-10 w-full bg-gray-200 rounded" />
+                <div className="h-10 w-full bg-gray-200 rounded" />
+                <div className="h-10 w-full bg-gray-200 rounded" />
+              </div>
+
+              {/* Buttons */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                <div className="h-12 w-full bg-gray-300 rounded" />
+                <div className="h-12 w-full bg-gray-400 rounded" />
+              </div>
+
+            </div>
+          </div>
+
+          <hr className="text-foreground/10 mt-10" />
+
+          {/* Features Section */}
+          <div className="grid grid-cols-3 mt-10 mb-10 p-4 gap-4">
+            <div className="h-16 bg-gray-200 rounded" />
+            <div className="h-16 bg-gray-200 rounded" />
+            <div className="h-16 bg-gray-200 rounded" />
+          </div>
+
+          <hr className="text-foreground/10 mt-1" />
+
+          {/* Similar Products Skeleton */}
+          <div className="mt-10 space-y-4">
+            <div className="h-8 w-48 bg-gray-300 rounded" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="h-60 bg-gray-200 rounded" />
+              <div className="h-60 bg-gray-200 rounded" />
+              <div className="h-60 bg-gray-200 rounded" />
+              <div className="h-60 bg-gray-200 rounded" />
+            </div>
+          </div>
+
+          {/* Details Section */}
+          <div className="bg-background p-2 mt-10 space-y-4">
+            <div className="h-8 w-32 bg-gray-300 rounded" />
+            <div className="h-4 w-full bg-gray-200 rounded" />
+            <div className="h-4 w-full bg-gray-200 rounded" />
+            <div className="h-4 w-5/6 bg-gray-200 rounded" />
+            <div className="h-4 w-3/4 bg-gray-200 rounded" />
+          </div>
+
+          {/* Ratings Section */}
+          <div className="p-2 mt-5 bg-background space-y-6">
+            <div className="h-8 w-48 bg-gray-300 rounded" />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <div className="h-5 w-32 bg-gray-300 rounded" />
+                <div className="h-4 w-48 bg-gray-200 rounded" />
+              </div>
+
+              <div className="space-y-3">
+                <div className="h-4 w-full bg-gray-200 rounded" />
+                <div className="h-4 w-full bg-gray-200 rounded" />
+                <div className="h-4 w-full bg-gray-200 rounded" />
+                <div className="h-4 w-full bg-gray-200 rounded" />
+                <div className="h-4 w-full bg-gray-200 rounded" />
+              </div>
+            </div>
+
+            <div className="h-12 w-full bg-gray-300 rounded" />
+          </div>
+
+        </div>
+
+        {/* Recently Viewed Skeleton */}
+        <div className="mt-10 space-y-4 animate-pulse">
+          <div className="h-8 w-48 bg-gray-300 rounded" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="h-60 bg-gray-200 rounded" />
+            <div className="h-60 bg-gray-200 rounded" />
+            <div className="h-60 bg-gray-200 rounded" />
+            <div className="h-60 bg-gray-200 rounded" />
+          </div>
+        </div>
+
+        {/* Best Products Skeleton */}
+        <div className="mt-10 space-y-4 animate-pulse">
+          <div className="h-8 w-48 bg-gray-300 rounded" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="h-60 bg-gray-200 rounded" />
+            <div className="h-60 bg-gray-200 rounded" />
+            <div className="h-60 bg-gray-200 rounded" />
+            <div className="h-60 bg-gray-200 rounded" />
+          </div>
+        </div>
+
+      </>
+    )
+  }
+
+
   return (
     <>
       <div className="bg-background grid grid-cols-1 mt-1 ">
@@ -162,7 +302,7 @@ export default function page() {
 
         <div className="bg-background  grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
           <div className="bg-background ">
-            <Maincarosel product={product.images} />
+            <Maincarosel product={product?.images} />
           </div>
           <div className="bg-background p-2 flex flex-col ">
             <h1 className="text-xl font-bold text-foreground md:line-clamp-1 mb-2">{product.brand}</h1>
@@ -171,7 +311,7 @@ export default function page() {
               <div className="flex gap-2 mt-2">
                 <span className="text-sm cursor-pointer px-2 py-1 border border-foreground bg-foreground text-background rounded-full mr-2">{product.color}</span>
               </div>
-              <p className="text-lg font-bold text-foreground mt-2">{product.price} <span className="line-through text-sm font-normal text-gray-500 ml-2">{product.Original_price}</span> <span className="text-green-600 text-sm font-bold ml-2">{product.discount}% OFF</span></p>
+              <p className="text-lg font-bold text-foreground mt-2">{product.price} <span className="line-through text-sm font-normal text-gray-500 ml-2">{product.originalPrice}</span> <span className="text-green-600 text-sm font-bold ml-2">{product.discount}% OFF</span></p>
               <div className="grid grid-cols-1 mt-4">
                 <h1 className="text-md text-lg font-bold text-foreground "> Delivery Details</h1>
                 <div className=" flex flex-col">
@@ -203,7 +343,7 @@ export default function page() {
           <div className="flex flex-col items-center justify-center gap-2 px-2">
             <FaRecycle className="text-lg text-foreground" />
             <p className="text-xs font-semibold leading-tight">
-              {product.return_day}-Day Return
+              {product.returnDay}-Day Return
             </p>
           </div>
 
@@ -226,7 +366,7 @@ export default function page() {
         <hr className="text-foreground/10 mt-1" />
 
 
-<ProductListComponent SectionName={"Similar Products"} products={products} Link={"/products/10"} />
+        <ProductListComponent SectionName={"Similar Products"} products={products} Link={"/products/10"} />
 
         <div className="bg-background p-2 mt-10 ">
           <div className="md:p-5  ">
@@ -234,76 +374,76 @@ export default function page() {
             <div className="flex flex-col">
               <p className="text-foreground text-sm mt-2 text-justify">{product.description}</p>
               <div>
-                {
-                  product.attributes.map((item, index) => {
-                    return (
+                {product.specifications && Object.entries(product.specifications).length > 0 && (
+                  <div>
+                    {Object.entries(product.specifications).map(([key, value], index) => (
                       <div key={index} className="flex gap-2 mt-2">
-                        <h1 className="text-sm font-bold text-foreground">{item.key}:</h1>
-                        <p className="text-sm text-foreground">{item.value}</p>
+                        <h1 className="text-sm font-bold text-foreground">{key}:</h1>
+                        <p className="text-sm text-foreground">{value?.toString()}</p>
                       </div>
-                    )
-                  })
-                }
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
 
         <div className="p-2 mt-5 bg-background">
-  <h1 className="font-extrabold text-2xl md:p-5">
-    Rating & Reviews
-  </h1>
+          <h1 className="font-extrabold text-2xl md:p-5">
+            Rating & Reviews
+          </h1>
 
-  <div className="md:p-5 grid grid-cols-1 md:grid-cols-2 gap-6 py-2">
+          <div className="md:p-5 grid grid-cols-1 md:grid-cols-2 gap-6 py-2">
 
-    {/* Left Side - Overall Rating */}
-    <div className="flex flex-col gap-2">
-      <Rating name="read-only" value={4.2} precision={0.1} readOnly />
-      <p className="text-sm text-muted-foreground">
-        2,000 ratings & 2,000 reviews
-      </p>
-    </div>
-
-    {/* Right Side - Rating Breakdown */}
-    <div className="flex flex-col gap-3">
-      
-      {[5,4,3,2,1].map((star) => (
-        <div key={star} className="flex items-center gap-3">
-          
-          {/* Star Number */}
-          <div className="flex items-center gap-1 w-10">
-            <span>{star}</span>
-            <FaStar className="text-yellow-500 text-sm" />
-          </div>
-
-          {/* Progress Bar */}
-          <div className="flex-1">
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-yellow-500 h-2 rounded-full"
-                 ></div>
+            {/* Left Side - Overall Rating */}
+            <div className="flex flex-col gap-2">
+              <Rating name="read-only" value={4.2} precision={0.1} readOnly />
+              <p className="text-sm text-muted-foreground">
+                2,000 ratings & 2,000 reviews
+              </p>
             </div>
+
+            {/* Right Side - Rating Breakdown */}
+            <div className="flex flex-col gap-3">
+
+              {[5, 4, 3, 2, 1].map((star) => (
+                <div key={star} className="flex items-center gap-3">
+
+                  {/* Star Number */}
+                  <div className="flex items-center gap-1 w-10">
+                    <span>{star}</span>
+                    <FaStar className="text-yellow-500 text-sm" />
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="flex-1">
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-yellow-500 h-2 rounded-full"
+                      ></div>
+                    </div>
+                  </div>
+
+                  {/* Percentage */}
+                  <span className="text-sm text-muted-foreground w-10 text-right">
+                    60%
+                  </span>
+                </div>
+              ))}
+
+            </div>
+
+
           </div>
-
-          {/* Percentage */}
-          <span className="text-sm text-muted-foreground w-10 text-right">
-            60%
-          </span>
+          <div className=" flex items-center justify-center">
+            <button className="bg-background border-foreground/40  cursor-pointer w-full mt-4 border hover:bg-foreground hover:text-background font-bold text-foreground p-4 rounded transition-colors duration-200">View Reviews</button>
+          </div>
         </div>
-      ))}
-
-    </div>
-
- 
-  </div>
-   <div className=" flex items-center justify-center">
-    <button className="bg-background border-foreground/40  cursor-pointer w-full mt-4 border hover:bg-foreground hover:text-background font-bold text-foreground p-4 rounded transition-colors duration-200">View Reviews</button>
-  </div>
-</div>
       </div>
-<ProductListComponent SectionName={"Recently Viewed"} products={products} Link={"/products/10"} />
+      <ProductListComponent SectionName={"Recently Viewed"} products={products} Link={"/products/10"} />
 
-<ProductListComponent SectionName={"Best Products"} products={products} Link={"/products/10"} />
+      <ProductListComponent SectionName={"Best Products"} products={products} Link={"/products/10"} />
     </>
   )
 }
