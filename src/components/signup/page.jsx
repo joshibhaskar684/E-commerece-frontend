@@ -15,6 +15,9 @@ export default function Signup({ handleClose, setPage }) {
             password: formData.get('password')
         }
     }
+    const handlesignwithgoogle=()=>{
+        
+    }
 
     return (
         <div className="fixed inset-0 bg-black/50 z-50 overflow-y-auto">
