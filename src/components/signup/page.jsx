@@ -16,7 +16,7 @@ export default function Signup({ handleClose, setPage }) {
         }
     }
     const handlesignwithgoogle=()=>{
-        
+        console.log("sign up with google")
     }
 
     return (
