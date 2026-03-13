@@ -49,6 +49,8 @@ export default function Navbar() {
     setOpenModal(false);
   };
 
+  
+
   return (
     <>
       <div className="bg-background text-foreground  sticky top-0 z-1">
