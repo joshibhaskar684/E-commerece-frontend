@@ -28,13 +28,27 @@ import AuthModal from '../Modal/AuthModal'
 import Cookies from 'js-cookie'
 import { FaUserCircle } from 'react-icons/fa'
 import Link from 'next/link'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 
 
-export default function Navbar() {
+export default function Navbar({tokenPresent}) {
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [tokenPresent, setTokenPresent] = useState(false);
   const router = useRouter();
+    const handlelogout = async () => {
+  try {
+    await axios.post("/api/logout", {}, {
+      withCredentials: true,   // 🔥 important for cookies
+    });
+
+  router.push("/");
+router.refresh();
+
+  } catch (error) {
+    console.error("Logout failed", error);
+  }
+};
 
 
   // useEffect(() => {  
@@ -44,6 +58,17 @@ export default function Navbar() {
 
   const [openModal, setOpenModal] = useState(false);
   const [page, setPage] = useState('');
+
+  const handleCart=()=>{
+ if(!tokenPresent){
+  setPage("login")
+  setOpenModal(true)
+  toast.error("Please login first")
+  
+ }else{
+  router.push("/cart")
+ }
+}
 
   const handleClose = () => {
     setOpenModal(false);
@@ -170,7 +195,7 @@ export default function Navbar() {
       Orders
     </a>
     <button
-      onClick={() => {setTokenPresent(false)}}
+      onClick={handlelogout}
       className="font-bold text-xl text-red-600 hover:text-red-800 transition text-left"
     >
       Logout
@@ -390,8 +415,9 @@ export default function Navbar() {
                         </MenuItem>
                         <MenuItem>
                           <button
+                          onClick={handlelogout}
                             // onClick={handleLogOut}
-                            href="#"
+                           
                             className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                           >
                             Log out
@@ -434,15 +460,15 @@ export default function Navbar() {
                 </div> */}
 
                   {/* Cart */}
-                  <div className="ml-4 flow-root lg:ml-6">
-                    <a href="/cart" className="group -m-2 flex items-center p-2" >
+                  <div className="ml-4 flow-root lg:     ml-6">
+                    <button onClick={handleCart} className="group -m-2 flex items-center p-2" >
                       <ShoppingBagIcon
                         aria-hidden="true"
                         className="size-6 shrink-0 text-foreground group-hover:text-foreground"
                       />
                       <span className="ml-2 text-sm font-medium text-foreground group-hover:text-foreground">0</span>
                       <span className="sr-only">items in cart, view bag</span>
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
