@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -26,12 +25,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Hide scrollbar but keep scrolling */
-.hide-scrollbar {
-  -ms-overflow-style: none;     /* IE & Edge */
-  scrollbar-width: none;        /* Firefox */
+a,p,div,h1,h2,h3,h4,h5,h6, button ,h7,Link,span,li,ul,ol{
+   /* font-family: 'Josefin Sans', sans-serif; */
+   /* overflow: hidden; */
 }
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;                /* Chrome, Safari */
-}
+/* p,h1,h2,h3,h4,h5,h6, button ,h7,Link,span,li,ul,ol{
+   overflow: hidden;
+} */

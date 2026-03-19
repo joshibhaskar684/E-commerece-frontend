@@ -32,23 +32,23 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 
 
-export default function Navbar({tokenPresent}) {
+export default function Navbar({ tokenPresent }) {
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const router = useRouter();
-    const handlelogout = async () => {
-  try {
-    await axios.post("/api/logout", {}, {
-      withCredentials: true,   // 🔥 important for cookies
-    });
+  const handlelogout = async () => {
+    try {
+      await axios.post("/api/logout", {}, {
+        withCredentials: true,   // 🔥 important for cookies
+      });
 
-  router.push("/");
-router.refresh();
+      router.push("/");
+      router.refresh();
 
-  } catch (error) {
-    console.error("Logout failed", error);
-  }
-};
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
 
 
   // useEffect(() => {  
@@ -59,22 +59,32 @@ router.refresh();
   const [openModal, setOpenModal] = useState(false);
   const [page, setPage] = useState('');
 
-  const handleCart=()=>{
- if(!tokenPresent){
-  setPage("login")
-  setOpenModal(true)
-  toast.error("Please login first")
-  
- }else{
-  router.push("/cart")
- }
-}
+  const handleCart = () => {
+    if (!tokenPresent) {
+      setPage("login")
+      setOpenModal(true)
+      toast.error("Please login first")
+
+    } else {
+      router.push("/cart")
+    }
+  }
 
   const handleClose = () => {
     setOpenModal(false);
   };
 
-  
+  const LoginData = [
+    { label: "Order", link: "/account/Order" },
+    { label: "WishList", link: "/account/wishlist" },
+    { label: "Order", link: "/account/order" },
+  ];
+  const NavData = [
+    { label: "Home", link: "/" },
+
+  ];
+
+
 
   return (
     <>
@@ -102,164 +112,59 @@ router.refresh();
                 </button>
               </div>
 
-              {/* Links */}
-              {/* <TabGroup className="mt-2">
-              <div className="border-b border-gray-200">
-                <TabList className="-mb-px flex space-x-8 px-4">
-                  {navigation.categories.map((category) => (
-                    <Tab
-                      key={category.name}
-                      className="flex-1 border-b-2 border-transparent px-1 py-4 text-base font-medium whitespace-nowrap text-foreground data-selected:border-indigo-600 data-selected:text-indigo-600"
-                    >
-                      {category.name}
-                    </Tab>
-                  ))}
-                </TabList>
+              <div className="space-y-6 border-t border-gray-200 px-4 py-6">
+                <div className="flow-root">
+                  {
+                    NavData.map((item, index) => (
+                      <a key={index} href={item.link} className="-m-2 cursor-pointer block p-2 font-medium text-foreground">
+                        {item.label}
+                      </a>
+                    ))
+                  }
+                </div>
               </div>
-              <TabPanels as={Fragment}>
-                {navigation.categories.map((category) => (
-                  <TabPanel key={category.name} className="space-y-10 px-4 pt-10 pb-8">
-                    <div className="grid grid-cols-2 gap-x-4">
-                      {category.featured.map((item) => (
-                        <div key={item.name} className="group relative text-sm">
-                          <img
-                            alt={item.imageAlt}
-                            src={item.imageSrc}
-                            className="aspect-square w-full rounded-lg bg-background text-foreground  object-cover group-hover:opacity-75"
-                          />
-                          <a href={item.href} className="mt-6 block font-medium text-foreground ">
-                            <span aria-hidden="true" className="absolute inset-0 z-10" />
-                            {item.name}
-                          </a>
-                          <p aria-hidden="true" className="mt-1">
-                            Shop now
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                    {category.sections.map((section) => (
-                      <div key={section.name}>
-                        <p id={`${category.id}-${section.id}-heading-mobile`} className="font-medium text-foreground">
-                          {section.name}
-                        </p>
-                        <ul
-                          role="list"
-                          aria-labelledby={`${category.id}-${section.id}-heading-mobile`}
-                          className="mt-6 flex flex-col space-y-6"
-                        >
-                          {section.items.map((item) => (
-                            <li key={item.name} className="flow-root">
-                              <a href={item.href} className="-m-2 block p-2 text-foreground">
-                                {item.name}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </TabPanel>
-                ))}
-              </TabPanels>
-            </TabGroup> */}
-
-              {/* <div className="space-y-6 border-t border-gray-200 px-4 py-6">
-                {/* {navigation.pages.map((page) => (
-                  <div key={page.name} className="flow-root">
-                    <a href={page.href} className="-m-2 block p-2 font-medium text-foreground">
-                      {page.name}
-                    </a>
-                  </div>
-                ))} *
-              </div> */}
 
               {
-                tokenPresent?(
-               <div className="space-y-6 border-t border-gray-200 px-4 py-6">
-  <div className="flex flex-col space-y-3">
-    <a
-      href="/account"
-      className="font-bold text-xl text-gray-800 hover:text-yellow transition"
-    >
-      Profile
-    </a>
-    <a
-      href="/setting"
-      className="font-bold text-xl text-gray-800 hover:text-yellow transition"
-    >
-      Setting
-    </a>
-    <a
-      href="/orders"
-      className="font-bold text-xl text-gray-800 hover:text-yellow transition"
-    >
-      Orders
-    </a>
-    <button
-      onClick={handlelogout}
-      className="font-bold text-xl text-red-600 hover:text-red-800 transition text-left"
-    >
-      Logout
-    </button>
-  </div>
-</div>
+                tokenPresent ? (
+                  <div className="space-y-6 border-t border-gray-200 px-4 py-6">
+                    <div className="flex flex-col space-y-3">
+                      {LoginData.map((item, index) => <div className="flow-root" key={index}>
+                        <a
+                          href={item.link}
+                          className="-m-2 cursor-pointer block p-2 font-medium text-foreground"  >
+                          {item.label}
+                        </a>
+                      </div>)}
 
-            ):( 
-                <div className="space-y-6 border-t border-gray-200 px-4 py-6">
-              <div className="flow-root">
-                <button  onClick={()=>{setOpenModal(true), setPage('login')}} className="-m-2 cursor-pointer block p-2 font-medium text-foreground">
-                  Sign in
-                </button>
-              </div>
-              <div className="flow-root">
-                <button onClick={()=>{setOpenModal(true), setPage('signup')}} className="-m-2 cursor-pointer block p-2 font-medium text-foreground">
-                  Create account
-                </button>
-              </div>
-            </div>)
+                      <div className="flow-root">
+
+                        <button
+                          onClick={() => { handlelogout() }}
+                          className="-m-2 cursor-pointer block p-2 font-medium text-foreground  text-left text-red-600 hover:text-red-800"        >
+                          Logout
+                        </button>
+                      </div>
+
+
+
+                    </div>
+                  </div>
+
+                ) : (
+                  <div className="space-y-6 border-t border-gray-200 px-4 py-6">
+                    <div className="flow-root">
+                      <button onClick={() => { setOpenModal(true), setPage('login') }} className="-m-2 cursor-pointer block p-2 font-medium text-foreground">
+                        Sign in
+                      </button>
+                    </div>
+                    <div className="flow-root">
+                      <button onClick={() => { setOpenModal(true), setPage('signup') }} className="-m-2 cursor-pointer block p-2 font-medium text-foreground">
+                        Create account
+                      </button>
+                    </div>
+                  </div>)
               }
 
-              {/* 
-{
-  tokenPresent&&
-               <div className="relative">
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="text-3xl text-gray-700"
-              >
-                <FaUserCircle />
-              </button>
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-2 z-50">
-                  <Link
-                    href="/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Profile
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-}
-            {!tokenPresent&&
-              <div className="space-y-6 border-t border-gray-200 px-4 py-6">
-              <div className="flow-root">
-                <button  onClick={()=>{setOpenModal(true), setPage('login')}} className="-m-2 cursor-pointer block p-2 font-medium text-foreground">
-                  Sign in
-                </button>
-              </div>
-              <div className="flow-root">
-                <button onClick={()=>{setOpenModal(true), setPage('signup')}} className="-m-2 cursor-pointer block p-2 font-medium text-foreground">
-                  Create account
-                </button>
-              </div>
-            </div>
-            } */}
 
             </DialogPanel>
           </div>
@@ -293,139 +198,45 @@ router.refresh();
                   </a>
                 </div>
 
-                {/* Flyout menus */}
-                {/* <PopoverGroup className="hidden lg:ml-8 lg:block lg:self-stretch">
-                <div className="flex h-full space-x-8">
-                  {navigation.categories.map((category) => (
-                    <Popover key={category.name} className="flex">
-                      <div className="relative flex">
-                        <PopoverButton className="group relative flex items-center justify-center text-sm font-medium text-foreground transition-colors duration-200 ease-out hover:text-foreground data-open:text-indigo-600">
-                          {category.name}
-                          <span
-                            aria-hidden="true"
-                            className="absolute inset-x-0 -bottom-px z-30 h-0.5 transition duration-200 ease-out group-data-open:bg-indigo-600"
-                          />
-                        </PopoverButton>
-                      </div>
-                      <PopoverPanel
-                        transition
-                        className="absolute inset-x-0 top-full z-20 w-full bg-background text-foreground  text-sm text-foreground transition data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
-                      >
-                        {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow *}
-                        <div aria-hidden="true" className="absolute inset-0 top-1/2 bg-background text-foreground  shadow-sm" />
-                        <div className="relative bg-background text-foreground ">
-                          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                            <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-16">
-                              <div className="col-start-2 grid grid-cols-2 gap-x-8">
-                                {category.featured.map((item) => (
-                                  <div key={item.name} className="group relative text-base sm:text-sm">
-                                    <img
-                                      alt={item.imageAlt}
-                                      src={item.imageSrc}
-                                      className="aspect-square w-full rounded-lg bg-gray-100 object-cover group-hover:opacity-75"
-                                    />
-                                    <a href={item.href} className="mt-6 block font-medium text-foreground">
-                                      <span aria-hidden="true" className="absolute inset-0 z-10" />
-                                      {item.name}
-                                    </a>
-                                    <p aria-hidden="true" className="mt-1">
-                                      Shop now
-                                    </p>
-                                  </div>
-                                ))}
-                              </div>
-                              <div className="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm">
-                                {category.sections.map((section) => (
-                                  <div key={section.name}>
-                                    <p id={`${section.name}-heading`} className="font-medium text-foreground">
-                                      {section.name}
-                                    </p>
-                                    <ul
-                                      role="list"
-                                      aria-labelledby={`${section.name}-heading`}
-                                      className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
-                                    >
-                                      {section.items.map((item) => (
-                                        <li key={item.name} className="flex">
-                                          <a href={item.href} className="hover:text-foreground">
-                                            {item.name}
-                                          </a>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </PopoverPanel>
-                    </Popover>
-                  ))}
-                  {navigation.pages.map((page) => (
-                    <a
-                      key={page.name}
-                      href={page.href}
-                      className="flex items-center text-sm font-medium text-foreground hover:text-foreground"
-                    >
-                      {page.name}
-                    </a>
-                  ))}
-                </div>
-              </PopoverGroup> */}
-
-
                 <div className="ml-auto flex justify-end items-center">
-                  {tokenPresent ? (<div className="hidden lg:flex">
-                    <Menu as="div" className="relative ml-3 ">
-                      <MenuButton className="relative  cursor-pointer flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
-                        <span className="absolute -inset-1.5" />
-                        <span className="sr-only">Open user menu</span>
-                        {/* <img
-                  alt=""
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  className="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
-                /> */}
-                        {/* <Avatar
-                          sx={{ bgcolor: 'yellow' }} // MUI theme color
-                          className="w-8 h-8 rounded-full outline outline-1 outline-white/10 text-white font-bold text-2xl"
+                  {tokenPresent ? (
+                    <div className="hidden lg:flex  overflow-visible">
+                      <Menu as="div" className="relative ml-3 ">
+                        <MenuButton className="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+                          <span className="absolute -inset-1.5" />
+                          <span className="sr-only">Open user menu</span>
+
+
+                          <FaUserCircle
+                            className="w-8 h-8 rounded-full outline outline-1 outline-white/10 text-foreground border font-bold text-2xl"
+
+                          />
+
+                        </MenuButton>
+                        <MenuItems
+                          transition
+                          className="absolute right-0 z-100 mt-2 w-48 origin-top-right rounded-md bg-foreground py-1 shadow-lg outline outline-black/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in "
                         >
-                          B
-                        </Avatar> */}
-                        <FaUserCircle className="w-8 h-8  cursor-pointer rounded-full outline outline-1 outline-white/10 text-white font-bold text-2xl" />
-                      </MenuButton>
-                      <MenuItems
-                        transition
-                        className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg outline outline-black/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
-                      >
-                        <MenuItem>
-                          <Link
-                            href="/account/order"
-                            className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                          >
-                            Order
-                          </Link>
-                        </MenuItem>
-                        <MenuItem>
-                          <a
-                            href="#"
-                            className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                          >
-                            Settings
-                          </a>
-                        </MenuItem>
-                        <MenuItem>
-                          <button
-                          onClick={handlelogout}
-                            // onClick={handleLogOut}
-                           
-                            className="block w-full px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden justify-start"
-                          >
-                            Log out
-                          </button>
-                        </MenuItem>
-                      </MenuItems>
-                    </Menu></div>
+                          {LoginData.map((item, index) => <MenuItem key={index}>
+                            <Link
+                              href={item.link}
+                              className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 cursor-pointer data-focus:outline-hidden"
+                            >
+                              {item.label}
+                            </Link>
+
+                          </MenuItem>)}
+
+                          <MenuItem className="">
+                            <button
+                              onClick={() => handlelogout()}
+                              className="block w-full px-4 py-2 text-sm text-red-700 data-focus:bg-red-100 data-focus:outline-hidden flex items-center cursor-pointer"
+                            >
+                              Log out
+                            </button>
+                          </MenuItem>
+                        </MenuItems>
+                      </Menu></div>
                   ) : (
                     <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
                       <button
@@ -452,13 +263,7 @@ router.refresh();
 
 
 
-                  {/* Search */}
-                  {/* <div className="flex lg:ml-6">
-                  <a href="#" className="p-2 text-foreground hover:text-foreground">
-                    <span className="sr-only">Search</span>
-                    <MagnifyingGlassIcon aria-hidden="true" className="size-6" />
-                  </a>
-                </div> */}
+
 
                   {/* Cart */}
                   <div className="ml-4 flow-root cursor-pointer lg:     ml-6">
