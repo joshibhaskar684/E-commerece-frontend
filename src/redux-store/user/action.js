@@ -32,18 +32,23 @@ import axios from "axios";
 
  export const LoginUser=(data)=>async(dispatch)=>{
     dispatch({type:LOGIN_USER_REQUEST});
-    const router=data.router
+    
     try{
         const res= await axios.post(`${backendUrl}/auth/login`,data ,{
   withCredentials: true
-});
-     router.push("/");
+}
+
+);
+     data.router.refresh("/");
         dispatch({type:LOGIN_USER_SUCCESS,payload:res.data});
     }
     catch(err){
-        toast.error(err.response.data.message);
+        toast.error(err.message);
         dispatch({type:LOGIN_USER_FAILURE,payload:err.message});
     }
+    finally{
+    data.setLoading(false)
+  }
  }
  export const LogoutUser = (data) => async (dispatch) => {
   dispatch({ type: LOGOUT_USER_REQUEST });
@@ -62,13 +67,17 @@ import axios from "axios";
         const res= await axios.post(`${backendUrl}/auth/signup`,data, {
   withCredentials: true
 });
+console.log(res.data)
         dispatch({type:REGISTER_USER_SUCCESS,payload:res.data});
     }
     catch(err){
 
     toast.error(err.message);
         dispatch({type:REGISTER_USER_FAILURE,payload:err.message});
-    }
+    }finally{
+    data.setLoading(false)
+  }
+    
  }
 
    export const UpdateUser=(data)=>async(dispatch)=>{

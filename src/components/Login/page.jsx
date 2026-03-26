@@ -1,19 +1,39 @@
 "use client";
+import { LoginUser } from "@/redux-store/user/action";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
+import { useDispatch } from "react-redux";
 
 export default function Login({ handleClose, setPage }) {
     const [loading, setLoading] = useState(false);
+    const dispatch=useDispatch();
+    const router =useRouter();
 
-    const handlesubmit = (e) => {
+    const handlesubmit = async(e) => {
         e.preventDefault();
+       
+    setLoading(true);
         const formData = new FormData(e.target);
+       try{ 
         const data = {
             name: formData.get('name'),
             mobile: formData.get('mobile'),
             email: formData.get('email'),
-            password: formData.get('password')
+            password: formData.get('password'),
+            setLoading,
+             router:router,
         }
+
+
+        await dispatch(LoginUser(data));
+    }
+    catch(error){
+
+    }finally{
+        handleClose();
+        router.push("/");
+    }
     }
 
     return (
@@ -52,7 +72,8 @@ export default function Login({ handleClose, setPage }) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
                         <button
                             type="submit"
-                            className="py-2 cursor-pointer rounded-lg border border-yellow-200 bg-yellow-500 text-foreground font-semibold hover:opacity-90 transition"
+                           
+                            className={`py-2 cursor-pointer rounded-lg border border-yellow-200 bg-yellow-500 text-foreground font-semibold  transition${loading ? " opacity-50 cursor-not-allowed bg-yellow-400/50" : "hover:opacity-90"}`}
                         >
                             {loading ? "Submitting..." : "Submit"}
                         </button>
@@ -60,7 +81,7 @@ export default function Login({ handleClose, setPage }) {
                         <button
                             type="button"
                             onClick={() => handleClose()}
-                            className="py-2 rounded-lg border cursor-pointer border-background text-background hover:bg-background hover:text-foreground transition"
+                            className={`py-2 rounded-lg border cursor-pointer border-background text-background hover:bg-background hover:text-foreground transition`}
                         >
                             Close
                         </button>
@@ -104,56 +125,3 @@ export default function Login({ handleClose, setPage }) {
 }
 
 
-
-
-// "use client";
-// import {useState}from "react";
-// import { FaGoogle } from "react-icons/fa";
-// export default function Login({handleClose,setPage}) {
-//     const [loading,setLoading]=useState(false);
-//     const handlesubmit=(e)=>{
-//         e.preventDefault();
-//         const formData=new FormData(e.target);
-//         const data ={
-//             name:formData.get('name'),
-//             mobile:formData.get('mobile'),
-//             email:formData.get('email'),
-//             password:formData.get('password')
-//         }
-//     }
-//     return(
-//         <div className="bg-foreground text-foreground p-4">
-//             <h1 className="text-background text-2xl font-bold">Login</h1>
-//         <div className="item-centre  border-7 z-50 ">
-//             <form onSubmit={handlesubmit} className="flex flex-col gap-4  h-full w-full ">
-// <label className="text-background">Email :</label>
-// <input type="text" name="email" className="text-background border " required placeholder="enter"/>
-// <label className="text-background">Password :</label>
-// <input type="text" className="text-background border" name="password  " required placeholder="enter"/>
-// <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//     <button type="submit" className={loading?"border text-background  border-background":"border text-background border-background"}>{loading ?"Submiting...":"Submit "}</button>
-
-// <button type="button" onClick={()=>handleClose()} className={loading?"border text-background border-background":"border text-background border-background"}>Close</button>
-
-// </div>
-// <button className=" border border-background  text-background flex items-center justify-center gap-2">
-//     <FaGoogle/>
-//     Continue with Google
-// </button>
-// <div>
-//     <p className="text-background">By Clicking you are agree with our term and condition</p>
-// </div>
-// <div>
-//     <p className="text-background">Create New account ? <button onClick={()=>setPage('signup')} className="text-blue-500 cursor-pointer">Login</button></p>
-// </div>
-
-
-//                 </form>
-
-
-
-
-//             </div>
-//         </div>
-//     )
-// }

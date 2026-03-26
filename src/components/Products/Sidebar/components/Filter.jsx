@@ -9,6 +9,7 @@ import { BrandsData } from './BrandsData';
 import { ColorData } from './ColorData';
 
 
+
 export default function Filter({ApplyFilters,activeBrandsId,setActiveBrandsId,activeBrand,setActiveBrand,activeColor,setActiveColor,color,setColor,brands,setBrands,ClearAllFilter, open, selectedItem, setSelectedItem, setOpen, activeCategory, setActiveCategory, activeSection, setActiveSection }) {
 
 
