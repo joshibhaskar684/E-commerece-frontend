@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { FaCut, FaMinus, FaPlus } from 'react-icons/fa'
+import { FaCut, FaMinus, FaPlus, FaTrash } from 'react-icons/fa'
 
 const products = [
   {
@@ -58,41 +58,43 @@ export default function Page() {
   )
 
   return (
-    <div className="bg-background text-foreground gap-8   flex flex-col md:flex-row p-10 justify-between">
-      <div className="flex flex-col gap-4 w-full overflow-y-auto h-full">
-        {cartProducts.map(product => (
-          <div key={product.id} className="border border-foreground/10 bg-foreground/10 p-2 rounded flex w-full">
-            <img src={product.imageSrc} alt={product.imageAlt} className="w-32 h-32 object-cover rounded" />
+    <>
+    <div className="grid grid-cols-1 md:grid-cols-2 place-items-center p-5 md:p-15  gap-5" >
+
+<div className="flex flex-col gap-4 p-5 w-full " > 
+ {cartProducts.map(product => (
+          <div key={product.id} className="border border-foreground bg-foreground text-background p-2 rounded flex w-full shadow-lg shadow-foreground/50">
+            <img src={product.imageSrc} alt={product.imageAlt} className="w-32 h-32 object-cover rounded shadow-lg shadow-background/50" />
             <div className="p-2 flex flex-col overflow-hidden gap-2 flex-1">
               <p className="line-clamp-1 font-semibold">{product.name}</p>
               <p className="line-clamp-1">{product.price}</p>
               <div className="flex flex-col gap-2 md:flex-row justify-between mt-auto">
                 <div className="flex flex-row gap-4 items-center">
                   <FaPlus
-                    className="text-foreground cursor-pointer border border-foreground p-1 rounded"
+                    className="text-background cursor-pointer border border-foreground p-1 rounded"
                     size={20}
                     onClick={() => handleQuantity(product.id, 'inc')}
                   />
                   <p>{product.quantity}</p>
                   <FaMinus
-                    className="text-foreground cursor-pointer border border-foreground p-1 rounded"
+                    className="text-background cursor-pointer border border-foreground p-1 rounded"
                     size={20}
                     onClick={() => handleQuantity(product.id, 'dec')}
                   />
                 </div>
                 <div
-                  className="border bg-foreground text-background rounded border-foreground p-2 cursor-pointer line-clamp-1 text-center"
+                  className="border bg-foreground text-background rounded border-red-600 p-2 cursor-pointer line-clamp-1 text-center flex items-center justify-center hover:bg-background"
                   onClick={() => handleRemove(product.id)}
                 >
-                  Remove
+                 <FaTrash className="text-red-600" />
                 </div>
               </div>
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="border rounded border-foreground/10 bg-foreground/10 p-4 w-full md:w-80 h-fit flex flex-col gap-4">
+  </div> 
+  <div className="flex flex-col gap-4  p-5 rounded w-full items-center justify-center h-full" >
+<div className="border rounded text-background border-foreground bg-foreground p-4 w-full md:w-1/2  h-fit flex flex-col gap-4">
         <p className="text-2xl font-bold">CheckOut</p>
         <div className="flex flex-col gap-2">
           <div className="flex justify-between">
@@ -111,12 +113,16 @@ export default function Page() {
         </div>
         <button
           onClick={handleCheckOut}
-          className={`border border-foreground bg-foreground text-background cursor-pointer rounded p-2 mt-4 ${loading ? 'animate-pulse' : ''}`}
+          className={`border border-background bg-foreground text-background cursor-pointer rounded p-2 mt-4 ${loading ? 'animate-pulse' : 'hover:bg-background hover:text-foreground'}`}
         >
           {loading ? 'Processing...' : 'Checkout'}
         </button>
       </div>
-    </div>
+  </div>
+      </div>
+
+    
+    </>
   )
 }
 
