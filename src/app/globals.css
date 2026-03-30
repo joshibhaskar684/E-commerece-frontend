@@ -22,13 +22,14 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+   font-family: "Jost", sans-serif;
 }
 
-a,p,div,h1,h2,h3,h4,h5,h6, button ,h7,Link,span,li,ul,ol{
-   /* font-family: 'Josefin Sans', sans-serif; */
-   /* overflow: hidden; */
+
+.jost {
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
 }
-/* p,h1,h2,h3,h4,h5,h6, button ,h7,Link,span,li,ul,ol{
-   overflow: hidden;
-} */
+
+
