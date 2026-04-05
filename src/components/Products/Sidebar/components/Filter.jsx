@@ -1,16 +1,42 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { FilterIcon } from 'lucide-react'
-import { navigation } from './FilterData'
 import { BrandsData } from './BrandsData';
 import { ColorData } from './ColorData';
+import { useDispatch, useSelector } from 'react-redux'
+import { getCategories } from '@/redux-store/Categories/action'
 
 
 
 export default function Filter({ApplyFilters,activeBrandsId,setActiveBrandsId,activeBrand,setActiveBrand,activeColor,setActiveColor,color,setColor,brands,setBrands,ClearAllFilter, open, selectedItem, setSelectedItem, setOpen, activeCategory, setActiveCategory, activeSection, setActiveSection }) {
+
+
+  const navigation = useSelector(
+    (state) => state.CategoriesReducer.data
+  );
+
+   const dispatch = useDispatch();
+
+
+  const getCategory = async () => {
+    try {
+      dispatch(getCategories());
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getCategory();
+  }, []);
+
+
+
+
+
 
 
 
@@ -58,77 +84,16 @@ export default function Filter({ApplyFilters,activeBrandsId,setActiveBrandsId,ac
 
                     <div className="p-4 py-5 w-full max-w-sm space-y-4">
 
-                      {navigation.categories.map((category) => (
-                        <div
-                          key={category.id}
-                          className="rounded-lg border border-gray-200 bg-foreground shadow-sm"
-                        >
-                          {/* CATEGORY */}
-                          <button
-                            onClick={() => {
-                              setActiveCategory(category.id === activeCategory ? null : category.id);
-                              setActiveSection(null);
-                              setSelectedItem(null);
-                            }}
-                            className={`w-full flex items-center justify-between px-4 py-3 text-left
-          font-semibold transition ${activeCategory === category.id
-                                ? " text-background"
-                                : "text-background"
-                              }`}
-                          >
-                            {category.name}
-                            <span className="text-sm">
-                              {activeCategory === category.id ? "−" : "+"}
-                            </span>
-                          </button>
-
-                          {/* SECTIONS */}
-                          {activeCategory === category.id && (
-                            <div className="px-4 py-3 space-y-3">
-                              {category.sections.map((section) => (
-                                <div key={section.id}>
-                                  {/* SECTION */}
-                                  <button
-                                    onClick={() => {
-                                      setActiveSection(section.id);
-                                      setActiveBrand(section.id);
-                                      setSelectedItem(null);
-                                    }}
-                                    className={`w-full text-left text-sm font-medium py-1
-                  ${activeSection === section.id
-                                        ? "text-background"
-                                        : "text-background/50 hover:text-gray-900"
-                                      }`}
-                                  >
-                                    {section.name}
-                                  </button>
-
-                                  {/* ITEMS */}
-                                  {activeSection === section.id && (
-                                    <div className="mt-2 ml-2 space-y-2">
-                                      {section.items.map((item) => (
-                                        <label
-                                          key={item.name}
-                                          className="flex items-center gap-2 cursor-pointer text-sm text-gray-700 hover:text-gray-900"
-                                        >
-                                          <input
-                                            type="checkbox"
-                                            checked={selectedItem === item.name}
-                                            onChange={() => setSelectedItem(item.name)}
-                                            className="h-4 w-4 rounded border-gray-300 text-blue-600
-                                   focus:ring-blue-500"
-                                          />
-                                          {item.name}
-                                        </label>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                     {navigation.map((category) => (
+  <RecursiveFilter
+    key={category.id}
+    node={category}
+    activeNode={activeCategory}
+    setActiveNode={setActiveCategory}
+    selectedItem={selectedItem}
+    setSelectedItem={setSelectedItem}
+  />
+))}
 
 
 

@@ -3,12 +3,14 @@
 // // import { ProductReducer } from "./products/reducer";
 // import { UserReducer } from "./user/reducer";
 
+import { CategoriesReducer } from "./Categories/reducer";
 import UserReducer from "./user/reducer";
 
 const { combineReducers, configureStore } = require("@reduxjs/toolkit");
 
 const rootReducer=combineReducers({
     UserReducer:UserReducer,
+    CategoriesReducer:CategoriesReducer,
 
 // ProductReducer:ProductReducer,
 // CartReducer:CartReducer,
