@@ -5,7 +5,7 @@ export async function proxy(request){
  const url = request.nextUrl.clone();
 
  const {pathname} = url;
- if(pathname.startsWith("/student")){
+ if(pathname.startsWith("/profile") || pathname.startsWith("/account")){
 
     if(!UserToken){
   return NextResponse.redirect(new URL("/", request.url));
@@ -20,6 +20,6 @@ export async function proxy(request){
 
 
 export const config={
-  matcher:["/profile/:path*"],
+  matcher:["/profile/:path*", "/account/:path*"],
   
 }

@@ -23,6 +23,7 @@ export default function RootLayout({ children }) {
       >
         <ReduxProvider>
         {children}
+        
          <ToastContainer
   position="bottom-center"           // bottom center
   autoClose={1500}                  // shorter auto close

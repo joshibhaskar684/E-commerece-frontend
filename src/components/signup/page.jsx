@@ -13,18 +13,19 @@ export default function Signup({ handleClose, setPage }) {
         setLoading(true);
       try { const formData = new FormData(e.target);
         const data = {
-             router:router,
+            
             name: formData.get('name'),
-            mobile: formData.get('mobile'),
+            mobileno: formData.get('mobile'),
             email: formData.get('email'),
             password: formData.get('password')
-            ,setLoading
+            
         }
         await dispatch(RegisterUser(data));}
+        
         catch(error){
 
         }finally{
-
+ setLoading(false);
         }
     }
     

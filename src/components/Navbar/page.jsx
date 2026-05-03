@@ -30,6 +30,7 @@ import { FaUserCircle } from 'react-icons/fa'
 import Link from 'next/link'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { LoginMenuData } from './logindata';
 
 
 export default function Navbar({ tokenPresent }) {
@@ -66,7 +67,7 @@ export default function Navbar({ tokenPresent }) {
       toast.error("Please login first")
 
     } else {
-      router.push("/cart")
+      router.push("/account/cart")
     }
   }
 
@@ -74,14 +75,9 @@ export default function Navbar({ tokenPresent }) {
     setOpenModal(false);
   };
 
-  const LoginData = [
-    { label: "Order", link: "/account/Order" },
-    { label: "WishList", link: "/account/wishlist" },
-    { label: "Order", link: "/account/order" },
-  ];
+  const LoginData = LoginMenuData;
   const NavData = [
     { label: "Home", link: "/" },
-
   ];
 
 
@@ -131,7 +127,7 @@ export default function Navbar({ tokenPresent }) {
                       {LoginData.map((item, index) => <div className="flow-root" key={index}>
                         <a
                           href={item.link}
-                          className="-m-2 cursor-pointer block p-2 font-medium text-foreground"  >
+                          className="-m-2 cursor-pointer block p-2 font-medium text-foreground "  >
                           {item.label}
                         </a>
                       </div>)}
@@ -217,10 +213,10 @@ export default function Navbar({ tokenPresent }) {
                           transition
                           className="absolute right-0 z-100 mt-2 w-48 origin-top-right rounded-md bg-foreground py-1 shadow-lg outline outline-black/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in "
                         >
-                          {LoginData.map((item, index) => <MenuItem key={index}>
+                          {LoginData.map((item, index) => <MenuItem key={index} >
                             <Link
                               href={item.link}
-                              className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 cursor-pointer data-focus:outline-hidden"
+                              className="block px-4 py-2 text-sm text-background hover:text-yellow-500 data-focus:bg-gray-100 cursor-pointer data-focus:outline-hidden"
                             >
                               {item.label}
                             </Link>
@@ -230,7 +226,7 @@ export default function Navbar({ tokenPresent }) {
                           <MenuItem className="">
                             <button
                               onClick={() => handlelogout()}
-                              className="block w-full px-4 py-2 text-sm text-red-700 data-focus:bg-red-100 data-focus:outline-hidden flex items-center cursor-pointer"
+                              className="block w-full px-4 py-2 text-sm text-red-700 font-bold data-focus:bg-red-100 data-focus:outline-hidden flex items-center cursor-pointer"
                             >
                               Log out
                             </button>

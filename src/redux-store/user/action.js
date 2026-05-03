@@ -61,13 +61,16 @@ import axios from "axios";
   }
 };
 
+
   export const RegisterUser=(data)=>async(dispatch)=>{
     dispatch({type:REGISTER_USER_REQUEST});
     try{
         const res= await axios.post(`${backendUrl}/auth/signup`,data, {
   withCredentials: true
 });
-console.log(res.data)
+
+    toast.success("Registration successful! Please log in.");
+
         dispatch({type:REGISTER_USER_SUCCESS,payload:res.data});
     }
     catch(err){
@@ -97,7 +100,7 @@ console.log(res.data)
         const token=data.token;
     dispatch({type:GET_USER_REQUEST});
     try{
-      const res = await axios.get(`${backendUrl}/auth/user/profile`, {
+      const res = await axios.get(`${backendUrl}/auth/profile`, {
   headers: {
     Authorization: `Bearer ${token}`
   }
