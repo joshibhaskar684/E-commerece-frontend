@@ -18,7 +18,7 @@ export default function page(){
         const [pagesize,setPagesize]=useState(Number(searchParams.get("pagesize")) || 12);
         const router=useRouter();
         const category=searchParams.get("category") || null;
-
+console.log(category,"category jhofyuifu")
        
     const products=useSelector((state)=>state.ProductReducer.products);
 
