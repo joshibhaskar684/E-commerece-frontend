@@ -2,7 +2,7 @@ export const CategoryData = [
     {
         id: 1,
         name: "Clothing",
-        path: "/products?category=clothing&pageno=1&pagesize=12",
+        path: "/products?category=Clothing&pageno=1&pagesize=12",
         image: "https://media.istockphoto.com/id/493626860/photo/colorful-saree-background.jpg?s=612x612&w=0&k=20&c=3buwZCcNoW-nZITKAAEonZBD6onlrOPq1yDH_lAuegc="
     },
     {

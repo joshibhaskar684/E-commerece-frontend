@@ -80,7 +80,7 @@ handleProductLoading();
 
  {
     products?.content?.map((item,index)=>(
-        <ProductCard product={item} key={index} handleViewMore={handleViewMore} selectedId={selectedId}/>
+        <ProductCard product={item} key={index} router={router} handleViewMore={handleViewMore} selectedId={selectedId}/>
     ))
 } 
 
