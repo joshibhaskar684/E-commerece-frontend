@@ -1,3 +1,138 @@
+
+
+"use client";
+
+import Maincarosel from "@/components/Products/productdetailsComponents/HeroSection";
+import ProductListComponent from "@/components/UniversalComponnets/ProductListComponent/ProductListComponent";
+import { getProductDetailsById } from "@/redux-store/products/action";
+
+import { Rating } from "@mui/material";
+import { SearchOff } from "@mui/icons-material";
+
+import { useEffect, useState } from "react";
+
+import {
+  FaHeadset,
+  FaMapMarked,
+  FaRecycle,
+  FaRupeeSign,
+  FaStar,
+  FaStore,
+  FaTruckPickup,
+} from "react-icons/fa";
+
+import { useDispatch, useSelector } from "react-redux";
+import { useParams, useRouter } from "next/navigation";
+
+export default function Page() {
+  const params = useParams();
+  const id = params.productid;
+
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const [loading, setLoading] = useState(true);
+
+  const product = useSelector(
+    (state) => state.ProductReducer.productdata
+  );
+
+  const products = [];
+
+  const fetchProductdetails = async () => {
+    setLoading(true);
+
+    try {
+      await dispatch(getProductDetailsById({ id }));
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProductdetails();
+  }, []);
+
+  /* =========================
+      LOADING
+  ========================== */
+
+  if (loading) {
+    return (
+      <div className="min-h-screen animate-pulse">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="h-[450px] bg-gray-200 rounded-lg" />
+
+          <div className="space-y-4">
+            <div className="h-6 w-40 bg-gray-200 rounded" />
+            <div className="h-8 w-72 bg-gray-200 rounded" />
+            <div className="h-10 w-48 bg-gray-200 rounded" />
+
+            <div className="space-y-3 pt-5">
+              <div className="h-12 bg-gray-200 rounded" />
+              <div className="h-12 bg-gray-200 rounded" />
+              <div className="h-12 bg-gray-200 rounded" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 pt-5">
+              <div className="h-12 bg-gray-200 rounded" />
+              <div className="h-12 bg-gray-300 rounded" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* =========================
+      NO PRODUCT
+  ========================== */
+
+  if (!product || !product?.id) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center bg-background px-6">
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm rounded-sm p-10 max-w-lg w-full text-center">
+
+          <div className="flex justify-center mb-8 relative">
+            <div className="bg-zinc-50 dark:bg-zinc-800 p-8 rounded-full">
+              <SearchOff className="text-zinc-300 dark:text-zinc-600 w-20 h-20" />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+              Product Not Found
+            </h2>
+
+            <p className="text-muted-foreground text-sm md:text-base">
+              The product you are looking for does not exist.
+            </p>
+          </div>
+
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => router.push("/")}
+              className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold uppercase text-xs tracking-wider px-8 py-3.5 rounded-sm"
+            >
+              Continue Shopping
+            </button>
+
+            <button
+              onClick={() => window.location.reload()}
+              className="border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-foreground font-bold uppercase text-xs tracking-wider px-8 py-3.5 rounded-sm"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
 <div className="bg-background mt-2">
 
   {/* =========================
@@ -370,6 +505,27 @@
     </div>
   </div>
 </div>
+
+  <ProductListComponent
+        SectionName={"Similar Products"}
+        products={products}
+        Link={"/products/10"}
+      />
+
+      <ProductListComponent
+        SectionName={"Recently Viewed"}
+        products={products}
+        Link={"/products/10"}
+      />
+
+      <ProductListComponent
+        SectionName={"Best Products"}
+        products={products}
+        Link={"/products/10"}
+      />
+    </>
+  );
+}
 
 
 // "use client";
