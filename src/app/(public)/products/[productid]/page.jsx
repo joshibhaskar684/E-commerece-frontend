@@ -158,7 +158,7 @@ export default function Page() {
           {product?.brand}
         </span>
 
-        {product?.inStock ? (
+        {product?.quantity>0 ? (
           <span className="bg-green-500/10 text-green-600 px-4 py-1.5 rounded-full text-xs font-bold">
             In Stock
           </span>
