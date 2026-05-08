@@ -169,9 +169,8 @@ export default function page() {
 const router=useRouter();
 
   const [fetch ,setFetch]=useState(false);
-  const store = useSelector((state) => state.ProductReducer);
+  const product = useSelector((state) => state.ProductReducer.productdata);
 
-  const product = store?.data || [];
 
   const fetchProductdetails=async()=>{
     setFetch(true);
@@ -188,7 +187,7 @@ const router=useRouter();
 fetchProductdetails();
   }, []);
 
-  if (product.length === 0 &&fetch) {
+  if (product &&fetch) {
     return (
       <>
         <div className="bg-background grid grid-cols-1 mt-1 animate-pulse">
@@ -371,13 +370,13 @@ fetchProductdetails();
             <Maincarosel product={product?.images} />
           </div>
           <div className="bg-background p-2 flex flex-col ">
-            <h1 className="text-xl font-bold text-foreground md:line-clamp-1 mb-2">{product.brand}</h1>
-            <h1 className="text-xl text-foreground md:line-clamp-1">{product.name}</h1>
+            <h1 className="text-xl font-bold text-foreground md:line-clamp-1 mb-2">{product?.brand}</h1>
+            <h1 className="text-xl text-foreground md:line-clamp-1">{product?.name}</h1>
             <div>
               <div className="flex gap-2 mt-2">
                 <span className="text-sm cursor-pointer px-2 py-1 border border-foreground bg-foreground text-background rounded-full mr-2">{product.color}</span>
               </div>
-              <p className="text-lg font-bold text-foreground mt-2">{product.price} <span className="line-through text-sm font-normal text-gray-500 ml-2">{product.originalPrice}</span> <span className="text-green-600 text-sm font-bold ml-2">{product.discount}% OFF</span></p>
+              <p className="text-lg font-bold text-foreground mt-2">{product?.price} <span className="line-through text-sm font-normal text-gray-500 ml-2">{product.originalPrice}</span> <span className="text-green-600 text-sm font-bold ml-2">{product.discount}% OFF</span></p>
               <div className="grid grid-cols-1 mt-4">
                 <h1 className="text-md text-lg font-bold text-foreground "> Delivery Details</h1>
                 <div className=" flex flex-col">
@@ -388,7 +387,7 @@ fetchProductdetails();
                     <FaTruckPickup className="inline-block text-sm text-foreground mr-1" /> <p className="text-sm font-bold">Delivery with in 2-3 days</p>
                   </div>
                   <div className=" flex items-center gap-2 mt-2 bg-foreground/10 p-2 rounded">
-                    <FaStore className="inline-block text-sm text-foreground mr-1" /> <p className="text-sm font-bold">Fulfilled by {product.store}</p>
+                    <FaStore className="inline-block text-sm text-foreground mr-1" /> <p className="text-sm font-bold">Fulfilled by {product?.store}</p>
                   </div>
 
                 </div>
@@ -409,7 +408,7 @@ fetchProductdetails();
           <div className="flex flex-col items-center justify-center gap-2 px-2">
             <FaRecycle className="text-lg text-foreground" />
             <p className="text-xs font-semibold leading-tight">
-              {product.returnDay}-Day Return
+              {product?.returnDay}-Day Return
             </p>
           </div>
 
@@ -438,11 +437,11 @@ fetchProductdetails();
           <div className="md:p-5  ">
             <h1 className="text-2xl font-extrabold">Details</h1>
             <div className="flex flex-col">
-              <p className="text-foreground text-sm mt-2 text-justify">{product.description}</p>
+              <p className="text-foreground text-sm mt-2 text-justify">{product?.description}</p>
               <div>
-                {product.specifications && Object.entries(product.specifications).length > 0 && (
+                {product?.specifications && Object.entries(product?.specifications).length > 0 && (
                   <div>
-                    {Object.entries(product.specifications).map(([key, value], index) => (
+                    {Object.entries(product?.specifications).map(([key, value], index) => (
                       <div key={index} className="flex gap-2 mt-2">
                         <h1 className="text-sm font-bold text-foreground">{key}:</h1>
                         <p className="text-sm text-foreground">{value?.toString()}</p>

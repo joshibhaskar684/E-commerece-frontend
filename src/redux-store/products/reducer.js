@@ -5,6 +5,7 @@ const initialState = {
   data:[],
     isLoading: false,
     products:null,
+    productdata: null,
     user: null,
     error: null,
     token: null
@@ -22,7 +23,7 @@ export const ProductReducer = (state = initialState, action) => {
             return { ...state, isLoading: false, products: action.payload };
         
           case GET_PRODUCT_DETAILS_SUCCESS:
-        return { ...state, isLoading: false, data: action.payload };
+        return { ...state, isLoading: false, productdata: action.payload };
         
         case GET_PRODUCTS_FAILURE:
           case GET_PRODUCT_DETAILS_FAILURE:
