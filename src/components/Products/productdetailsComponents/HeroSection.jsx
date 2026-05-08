@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 const Maincarosel = ({product}) => {
     const navigate = useRouter(); // ✅ correct placement
 
-    const items = product.map((item, index) => (
+    const items = product?.map((item, index) => (
         <div className="item flex justify-center items-center" key={index} style={{ width: "auto" }}>
             <img
                 src={item}
