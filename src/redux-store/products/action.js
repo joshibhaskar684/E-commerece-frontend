@@ -6,6 +6,37 @@ import axios from "axios";
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ;
 
+
+
+
+
+
+export const getProductswithQuery = (data) =>async (dispatch) => {
+    const pageno=data.pageno-1;
+    const pagesize=data.pagesize;
+    const query=data.query;
+console.log("get products called")
+    dispatch({ type: GET_PRODUCTS_REQUEST });
+
+    try{
+        const response =await axios.get(`${backendUrl}/products/page/query/main`,{
+            params: {
+                pageno,
+                pagesize,
+                query,
+            }
+        });
+        console.log(response,"from product api user");
+        dispatch({ type: GET_PRODUCTS_SUCCESS, payload: response.data });
+    }
+        catch(error){   
+            toast.error("Please try again."+error.message)
+        dispatch({ type: GET_PRODUCTS_FAILURE, payload: error.message });
+        
+    }
+
+}
+
 export const getProductswithCategory = (data) =>async (dispatch) => {
     const pageno=data.pageno-1;
     const pagesize=data.pagesize;

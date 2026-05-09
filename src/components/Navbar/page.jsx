@@ -51,6 +51,10 @@ export default function Navbar({ tokenPresent }) {
     }
   };
 
+  const searchfunction = (searchQuery) => {
+    router.push(`/search?query=${encodeURIComponent(searchQuery)}&pageno=1&pagesize=12`);
+
+  }
 
   // useEffect(() => {  
   //   const usertoken=Cookies.get("usertoken");
