@@ -282,7 +282,7 @@ export default function Navbar({ tokenPresent }) {
           </nav>
         </header>
 
-        <SearchBar />
+        <SearchBar searchfunction={searchfunction} />
       </div>
 
       <AuthModal openModal={openModal} setOpenModal={setOpenModal} page={page} setPage={setPage} />

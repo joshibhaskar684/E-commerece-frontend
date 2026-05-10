@@ -27,6 +27,9 @@ console.log(query,"query jhofyuifu")
 handleProductLoading();
     },[pageno,pagesize]
     );
+    useEffect(()=>{
+handleProductLoading();
+    },[query])
 
     const handleProductLoading=()=>{
       if(!query){
