@@ -2,6 +2,7 @@ import { ADD_TO_CART_FAILURE, ADD_TO_CART_REQUEST, ADD_TO_CART_SUCCESS, GET_CART
 
 const initialState = {
   data:[],
+  cartdata:null,
     isLoading: false,
     user: null,
     error: null,
@@ -19,6 +20,8 @@ export const CartReducer = (state = initialState, action) => {
 
 
         case GET_CART_SUCCESS:
+          
+        return { ...state, isLoading: false, cartdata: action.payload };
           case ADD_TO_CART_SUCCESS:
             case UPDATE_CART_ITEM_SUCCESS:
               case REMOVE_FROM_CART_SUCCESS:

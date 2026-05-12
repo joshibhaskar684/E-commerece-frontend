@@ -6,17 +6,17 @@ import axios from "axios";
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ;
 
-export const getUserRequest = (data) =>async (dispatch) => {
+export const AddToCartRequest = (data) =>async (dispatch) => {
 
-    dispatch({ type: GET_USER_REQUEST });
+    dispatch({ type: ADD_TO_CART_REQUEST });
     try{
-        const response =await axios(`${backendUrl}/user/getuser`);
+        const response =await axios(`${backendUrl}/cart/getuser`);
         
-        dispatch({ type: GET_USER_SUCCESS, payload: response.data });
+        dispatch({ type:ADD_TO_CART_SUCCESS, payload: response.data });
     }
         catch(error){   
             toast.error("Please try again."+error.message)
-        dispatch({ type: GET_USER_FAILURE, payload: error.message });
+        dispatch({ type: ADD_TO_CART_FAILURE, payload: error.message });
         
     }
 
