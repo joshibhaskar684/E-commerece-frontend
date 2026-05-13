@@ -44,3 +44,40 @@ export const GetCartRequest = (data) =>async (dispatch) => {
     }
 
 }
+
+
+
+export const GetCartRequest1 = (data) =>async (dispatch) => {
+
+    dispatch({ type: GET_CART_REQUEST });
+    try{
+        const response =await axios(`${backendUrl}/cart/getuser`);
+        
+        dispatch({ type:GET_CART_SUCCESS, payload: response.data });
+    }
+        catch(error){   
+            toast.error("Please try again."+error.message)
+        dispatch({ type:GET_CART_FAILURE, payload: error.message });
+        
+    }
+
+}
+
+
+
+
+export const GetCartRequest2 = (data) =>async (dispatch) => {
+
+    dispatch({ type: GET_CART_REQUEST });
+    try{
+        const response =await axios(`${backendUrl}/cart/getuser`);
+        
+        dispatch({ type:GET_CART_SUCCESS, payload: response.data });
+    }
+        catch(error){   
+            toast.error("Please try again."+error.message)
+        dispatch({ type:GET_CART_FAILURE, payload: error.message });
+        
+    }
+
+}
