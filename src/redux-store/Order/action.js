@@ -22,7 +22,21 @@ export const getOrderRequest = (data) =>async (dispatch) => {
     }
 
 }
+export const getOrderDetailsByOrderId = (data) =>async (dispatch) => {
 
+    dispatch({ type: GET_ORDER_REQUEST });
+    try{
+        const response =await axios(`${backendUrl}/user/getuser`);
+        
+        dispatch({ type: GET_ORDER_SUCCESS, payload: response.data });
+    }
+        catch(error){   
+            toast.error("Please try again."+error.message)
+        dispatch({ type: GET_ORDER_FAILURE, payload: error.message });
+        
+    }
+
+}
 
 export const getOrderDetailsByUserId = (data) =>async (dispatch) => {
 
