@@ -2,6 +2,7 @@
 import "./globals.css";
 import ReduxProvider from './../redux-store/ReduxProvider/ReduxProvider';
 import { ToastContainer } from "react-toastify";
+import AiBot from "../components/ai/AiBoat";
 
 
 export const metadata = {
@@ -23,7 +24,7 @@ export default function RootLayout({ children }) {
       >
         <ReduxProvider>
         {children}
-        
+        <AiBot />
          <ToastContainer
   position="bottom-center"           // bottom center
   autoClose={1500}                  // shorter auto close
