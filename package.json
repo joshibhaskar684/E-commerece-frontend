@@ -17,6 +17,7 @@
     "@mui/material": "^7.3.7",
     "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/typography": "^0.5.20",
+    "aos": "^2.3.4",
     "axios": "^1.13.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
