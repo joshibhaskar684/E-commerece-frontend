@@ -138,7 +138,7 @@ export default function MainHomePage(){
         <ProductListComponent SectionName={"Top Rated"} products={products} Link={"/products/10"} />
         <ProductListComponent SectionName={"Trending"} products={products} Link={"/products/10"} />
         {/* <div className='h-[900px]'></div> */}
-        <Footer/>
+        {/* <Footer/> */}
         </>
     )
 }

@@ -15,6 +15,7 @@ export default function page(){
      const [totalPage,setTotalPages]=useState(12);
         const [pageno,setPageno]=useState(Number(searchParams.get("pageno")) || 1);
         const [selectedId ,setSelectedId]=useState('');
+const [sortOption, setSortOption] = useState(null);
         const [pagesize,setPagesize]=useState(Number(searchParams.get("pagesize")) || 12);
         const router=useRouter();
         const category=searchParams.get("category") || null;
@@ -25,16 +26,16 @@ console.log(category,"category jhofyuifu")
     console.log(products,"products");
     useEffect(()=>{
 handleProductLoading();
-    },[pageno,pagesize]
+    },[pageno,pagesize,sortOption]
     );
 
     const handleProductLoading=()=>{
       if(!category){
 
-        dispatch(getProducts({pageno,pagesize}));
+        dispatch(getProducts({pageno,pagesize,sortOption}));
         return;
       }
-       dispatch(getProductswithCategory({pageno,pagesize,category}));
+       dispatch(getProductswithCategory({pageno,pagesize,category,sortOption}));
       
 
     }
@@ -68,7 +69,7 @@ handleProductLoading();
         <>
          <div className="bg-background ">
        <div className="sticky top-32 z-1 bg-background">
-       <Sidebar />
+       <Sidebar sortOption={sortOption} setSortOption={setSortOption} />
        </div>
         <div className="grid grid-cols-1 gap-5">
             <div className="w-full">

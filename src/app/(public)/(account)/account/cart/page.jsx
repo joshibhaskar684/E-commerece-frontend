@@ -1,136 +1,210 @@
 'use client'
 
+import NoItemFound from '@/components/Cart/NoItemFound';
 import { useState } from 'react'
-import { FaCut, FaMinus, FaPlus, FaTrash } from 'react-icons/fa'
+import { FaMinus, FaPlus, FaTrash } from 'react-icons/fa'
 
-const products = [
-  {
-    id: 1,
-    name: 'Throwback Hip Bag',
-    price: '$90.00',
-    quantity: 1,
-    imageSrc: 'https://tailwindcss.com/plus-assets/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
-    imageAlt: 'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
-  },
-  {
-    id: 2,
-    name: 'Medium Stuff Satchel',
-    price: '$32.00',
-    quantity: 1,
-    imageSrc: 'https://tailwindcss.com/plus-assets/img/ecommerce-images/shopping-cart-page-04-product-02.jpg',
-    imageAlt: 'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
-  },
-  {
-    id: 3,
-    name: 'Zip Tote Basket',
-    price: '$140.00',
-    quantity: 1,
-    imageSrc: 'https://tailwindcss.com/plus-assets/img/ecommerce-images/shopping-cart-page-04-product-03.jpg',
-    imageAlt: 'Front of zip tote bag with white canvas, black canvas straps and handle, and black zipper pulls.',
-  },
-]
+// Assuming this comes from props, context, or an API
+const products = null ;
+
+// Helper function to safely extract numbers from price strings (e.g., "$12.99" -> 12.99)
+const getSafePrice = (priceStr) => {
+  if (!priceStr) return 0;
+  // Removes any character that isn't a digit or a decimal point
+  const numericString = priceStr.toString().replace(/[^0-9.]/g, '');
+  return parseFloat(numericString) || 0;
+};
 
 export default function Page() {
-  const [loading, setLoading] = useState(false)
-  const [cartProducts, setCartProducts] = useState(products)
+  const [loading, setLoading] = useState(false);
+  const [cartProducts, setCartProducts] = useState(products);
+
+  // 1. Safety Check: If data is completely null or empty, show NoItemFound
+  if (!cartProducts || cartProducts?.length === 0) {
+    return <NoItemFound />
+  }
+
+  // 2. Safely calculate total price with optional chaining and fallbacks
+  const totalPrice = cartProducts?.reduce((acc, product) => {
+    const price = getSafePrice(product?.price);
+    const quantity = product?.quantity || 1; // Fallback to 1 if quantity is missing
+    return acc + (price * quantity);
+  }, 0) || 0;
 
   const handleCheckOut = () => {
     setLoading(true)
+    setTimeout(() => { setLoading(false) }, 2000)
   }
 
   const handleQuantity = (id, type) => {
     setCartProducts(prev =>
-      prev.map(product =>
-        product.id === id
-          ? { ...product, quantity: type === 'inc' ? product.quantity + 1 : Math.max(product.quantity - 1, 1) }
+      prev?.map(product =>
+        product?.id === id
+          ? { 
+              ...product, 
+              quantity: type === 'inc' 
+                ? (product?.quantity || 1) + 1 
+                : Math.max((product?.quantity || 1) - 1, 1) 
+            }
           : product
       )
     )
   }
 
   const handleRemove = id => {
-    setCartProducts(prev => prev.filter(product => product.id !== id))
+    setCartProducts(prev => prev?.filter(product => product?.id !== id))
   }
 
-  const totalPrice = cartProducts.reduce(
-    (acc, product) => acc + parseFloat(product.price.replace('$', '')) * product.quantity,
-    0
-  )
-
   return (
-    <>
-    <div className="grid grid-cols-1 md:grid-cols-2 place-items-center p-5 md:p-15  gap-5" >
+    <div className="min-h-screen bg-background text-foreground py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        
+        {/* Header Section */}
+        <div className="mb-6 sm:mb-10 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
+            Shopping Cart
+          </h1>
+          <span className="text-foreground/60 font-medium text-sm sm:text-base">
+            {cartProducts?.length || 0} {cartProducts?.length === 1 ? 'item' : 'items'} in your cart
+          </span>
+        </div>
 
-<div className="flex flex-col gap-4 p-5 w-full " > 
- {cartProducts.map(product => (
-          <div key={product.id} className="border border-foreground bg-foreground text-background p-2 rounded flex w-full shadow-lg shadow-foreground/50">
-            <img src={product.imageSrc} alt={product.imageAlt} className="w-32 h-32 object-cover rounded shadow-lg shadow-background/50" />
-            <div className="p-2 flex flex-col overflow-hidden gap-2 flex-1">
-              <p className="line-clamp-1 font-semibold">{product.name}</p>
-              <p className="line-clamp-1">{product.price}</p>
-              <div className="flex flex-col gap-2 md:flex-row justify-between mt-auto">
-                <div className="flex flex-row gap-4 items-center">
-                  <FaPlus
-                    className="text-background cursor-pointer border border-foreground p-1 rounded"
-                    size={20}
-                    onClick={() => handleQuantity(product.id, 'inc')}
-                  />
-                  <p>{product.quantity}</p>
-                  <FaMinus
-                    className="text-background cursor-pointer border border-foreground p-1 rounded"
-                    size={20}
-                    onClick={() => handleQuantity(product.id, 'dec')}
+        {/* Layout: Stacks on mobile, splits 2/3 and 1/3 on Desktop */}
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+          
+          {/* Cart Items Container */}
+          <div className="w-full lg:w-2/3 flex flex-col gap-4 sm:gap-6">
+            {cartProducts?.map(product => (
+              <div 
+                key={product?.id} 
+                className="group relative flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 sm:p-5 rounded-2xl border border-foreground/10 bg-background shadow-sm hover:shadow-md transition-all duration-300"
+              >
+                {/* Product Image: Responsive sizing */}
+                <div className="relative w-full sm:w-32 md:w-40 aspect-square sm:aspect-auto sm:h-32 md:h-40 flex-shrink-0 rounded-xl overflow-hidden bg-foreground/5">
+                  <img 
+                    src={product?.imageSrc || '/placeholder-image.jpg'} 
+                    alt={product?.imageAlt || product?.name || 'Product Image'} 
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" 
                   />
                 </div>
-                <div
-                  className="border bg-foreground text-background rounded border-red-600 p-2 cursor-pointer line-clamp-1 text-center flex items-center justify-center hover:bg-background"
-                  onClick={() => handleRemove(product.id)}
-                >
-                 <FaTrash className="text-red-600" />
+
+                {/* Product Details: min-w-0 prevents text from breaking the flex container */}
+                <div className="flex flex-col flex-1 min-w-0 justify-between">
+                  
+                  <div className="flex justify-between items-start gap-4">
+                    {/* Title & Price Container */}
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-base sm:text-lg md:text-xl font-semibold break-words line-clamp-2">
+                        {product?.name || 'Unknown Product'}
+                      </h3>
+                      <p className="text-sm sm:text-base text-foreground/60 mt-1 sm:mt-2">
+                        {product?.price || '$0.00'}
+                      </p>
+                    </div>
+                    
+                    {/* Remove Button: Top right on desktop, stays visible on mobile */}
+                    <button 
+                      onClick={() => handleRemove(product?.id)}
+                      className="flex-shrink-0 p-2 sm:p-2.5 text-red-500 bg-red-500/5 hover:bg-red-500/15 rounded-full transition-colors sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500"
+                      aria-label="Remove item"
+                    >
+                      <FaTrash size={14} className="sm:w-4 sm:h-4" />
+                    </button>
+                  </div>
+
+                  {/* Quantity & Subtotal: Wraps nicely on extra small screens */}
+                  <div className="flex flex-wrap justify-between items-center gap-4 mt-4 sm:mt-auto pt-4 sm:pt-0 border-t border-foreground/5 sm:border-transparent">
+                    
+                    {/* Pill-shaped Quantity Toggles */}
+                    <div className="flex items-center gap-2 sm:gap-3 border border-foreground/20 rounded-full px-2 sm:px-3 py-1 sm:py-1.5 bg-background shadow-sm">
+                      <button 
+                        onClick={() => handleQuantity(product?.id, 'dec')}
+                        className="text-foreground/60 hover:text-foreground p-1 sm:p-1.5 transition-colors focus:outline-none focus:ring-1 focus:ring-foreground rounded-full"
+                        aria-label="Decrease quantity"
+                      >
+                        <FaMinus size={12} />
+                      </button>
+                      <span className="text-sm sm:text-base font-medium w-6 sm:w-8 text-center select-none">
+                        {product?.quantity || 1}
+                      </span>
+                      <button 
+                        onClick={() => handleQuantity(product?.id, 'inc')}
+                        className="text-foreground/60 hover:text-foreground p-1 sm:p-1.5 transition-colors focus:outline-none focus:ring-1 focus:ring-foreground rounded-full"
+                        aria-label="Increase quantity"
+                      >
+                        <FaPlus size={12} />
+                      </button>
+                    </div>
+
+                    {/* Item Subtotal Price */}
+                    <p className="font-bold text-base sm:text-lg md:text-xl">
+                      ${(getSafePrice(product?.price) * (product?.quantity || 1)).toFixed(2)}
+                    </p>
+                  </div>
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* Checkout Summary Sidebar */}
+          <div className="w-full lg:w-1/3 lg:sticky lg:top-8">
+            <div className="border border-foreground/10 rounded-3xl p-5 sm:p-6 md:p-8 bg-foreground/5 flex flex-col gap-5 sm:gap-6 shadow-sm">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Order Summary</h2>
+              
+              <div className="flex flex-col gap-3 sm:gap-4 text-sm sm:text-base text-foreground/80">
+                <div className="flex justify-between items-center">
+                  <span>Subtotal</span>
+                  <span className="text-foreground font-medium">${totalPrice.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Discount</span>
+                  <span className="text-green-600 font-medium">-$0.00</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Estimated Tax</span>
+                  <span className="text-foreground font-medium">Calculated at checkout</span>
+                </div>
+                
+                <hr className="border-foreground/10 my-1 sm:my-2" />
+                
+                <div className="flex flex-wrap justify-between items-end gap-2 text-foreground">
+                  <span className="text-base sm:text-lg md:text-xl font-bold">Total Price</span>
+                  <span className="text-2xl sm:text-3xl md:text-4xl font-black break-words">
+                    ${totalPrice.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Checkout Button */}
+              <button
+                onClick={handleCheckOut}
+                disabled={loading || totalPrice === 0}
+                className={`group relative w-full py-3.5 sm:py-4 rounded-xl font-bold text-sm sm:text-base md:text-lg flex justify-center items-center gap-2 overflow-hidden transition-all duration-300 mt-2
+                  ${(loading || totalPrice === 0)
+                    ? 'bg-foreground/50 text-background/80 cursor-not-allowed' 
+                    : 'bg-foreground text-background hover:bg-foreground/90 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98]'
+                  }`}
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-4 w-4 sm:h-5 sm:w-5 text-background" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </>
+                ) : (
+                  'Proceed to Checkout'
+                )}
+              </button>
             </div>
           </div>
-        ))}
-  </div> 
-  <div className="flex flex-col gap-4  p-5 rounded w-full items-center justify-center h-full" >
-<div className="border rounded text-background border-foreground bg-foreground p-4 w-full md:w-1/2  h-fit flex flex-col gap-4">
-        <p className="text-2xl font-bold">CheckOut</p>
-        <div className="flex flex-col gap-2">
-          <div className="flex justify-between">
-            <p>Original Price</p>
-            <p>${totalPrice.toFixed(2)}</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Total Discount</p>
-            <p>$0.00</p>
-          </div>
-          <hr />
-          <div className="flex justify-between font-bold text-lg">
-            <p>Total Price</p>
-            <p>${totalPrice.toFixed(2)}</p>
-          </div>
+          
         </div>
-        <button
-          onClick={handleCheckOut}
-          className={`border border-background bg-foreground text-background cursor-pointer rounded p-2 mt-4 ${loading ? 'animate-pulse' : 'hover:bg-background hover:text-foreground'}`}
-        >
-          {loading ? 'Processing...' : 'Checkout'}
-        </button>
       </div>
-  </div>
-      </div>
-
-    
-    </>
+    </div>
   )
 }
-
-
-
-
-
-
 
 
 

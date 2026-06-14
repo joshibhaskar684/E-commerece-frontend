@@ -18,7 +18,7 @@ export default function page(){
         const [pagesize,setPagesize]=useState(Number(searchParams.get("pagesize")) || 12);
         const router=useRouter();
         const query=searchParams.get("query") || null;
-console.log(query,"query jhofyuifu")
+        
        
     const products=useSelector((state)=>state.ProductReducer.products);
 

@@ -1,79 +1,95 @@
-"use client";
-
 import React, { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
-export default function NoItemFound() {
-  // Initialize AOS animations on component mount
+export default function FlipkartEmptyCart() {
   useEffect(() => {
     AOS.init({
-      once: true, // Ensures animations only run once
-      easing: 'ease-out-cubic', // Smooth easing function
+      once: true,
+      easing: 'ease-out-cubic',
     });
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
+    // Outer wrapper using your theme variables
+    <div className="flex items-center justify-center min-h-[75vh] bg-background text-foreground p-4 md:p-8">
+      
+      {/* Flipkart style uses subtle borders and boxy, clean cards on desktop */}
       <div 
         data-aos="fade-up" 
-        data-aos-duration="800"
-        className="flex flex-col items-center text-center max-w-md"
+        data-aos-duration="600"
+        className="w-full max-w-4xl flex flex-col items-center justify-center py-16 px-4 bg-background border border-gray-200/60 dark:border-gray-800 rounded-sm shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
       >
-        {/* Animated SVG Container */}
+        {/* Illustration Container */}
         <div 
           data-aos="zoom-in" 
-          data-aos-duration="600" 
           data-aos-delay="150"
-          className="relative mb-8 flex justify-center items-center"
+          data-aos-duration="600"
+          className="relative w-48 h-40 mb-6 flex justify-center items-center"
         >
-          {/* Soft background glow/circle behind the icon for depth */}
-          <div className="absolute inset-0 bg-gray-100 rounded-full blur-2xl transform scale-150"></div>
-          
-          {/* Clean Shopping Bag SVG */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.2}
-            stroke="currentColor"
-            className="relative w-32 h-32 text-gray-400"
+          {/* Flipkart-style Empty Cart SVG with Yellow Accents */}
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 200 150" 
+            className="w-full h-full"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+            <path 
+              d="M30 40 L50 40 L70 100 L150 100 L170 50 L60 50" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="6" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className="text-gray-300 dark:text-gray-700"
             />
+            <circle 
+              cx="80" 
+              cy="120" 
+              r="10" 
+              fill="currentColor" 
+              className="text-gray-400 dark:text-gray-600"
+            />
+            <circle 
+              cx="140" 
+              cy="120" 
+              r="10" 
+              fill="currentColor" 
+              className="text-gray-400 dark:text-gray-600"
+            />
+            {/* Yellow Accent Elements representing missing items */}
+            <circle cx="100" cy="75" r="8" className="fill-yellow-500" />
+            <rect x="120" y="65" width="16" height="16" rx="2" className="fill-yellow-400" />
+            <path d="M100 20 L110 40 L90 40 Z" className="fill-yellow-500" />
           </svg>
         </div>
 
-        {/* Text Content */}
+        {/* Text Content - Mimicking Flipkart's exact phrasing and typography */}
         <h2 
           data-aos="fade-up" 
-          data-aos-delay="300"
-          className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 tracking-tight"
+          data-aos-delay="250"
+          className="text-xl md:text-2xl font-semibold mb-2"
         >
-          Your cart is empty
+          Missing Cart items?
         </h2>
+        
         <p 
           data-aos="fade-up" 
-          data-aos-delay="400"
-          className="text-base text-gray-500 mb-8 leading-relaxed"
+          data-aos-delay="350"
+          className="text-sm md:text-base text-gray-500 dark:text-gray-400 mb-8 text-center max-w-sm"
         >
-          Looks like you haven't added anything to your cart yet. Discover our latest collections and find something you'll love.
+          Login to see the items you added previously or start shopping now.
         </p>
 
-        {/* Interactive CTA Button */}
+        {/* Flipkart style buttons are typically wider rectangles with slight rounding */}
         <button
           data-aos="fade-up"
-          data-aos-delay="500"
-          className="px-8 py-3 bg-black text-white font-medium rounded-full shadow-md transition-all duration-300 hover:bg-gray-800 hover:-translate-y-1 hover:shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+          data-aos-delay="450"
+          className="px-16 py-3.5 bg-yellow-500 text-yellow-950 font-medium text-sm md:text-base rounded-sm shadow-sm transition-all duration-300 hover:bg-yellow-400 hover:shadow-md active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
           onClick={() => {
-            // Replace with your router navigation (e.g., router.push('/shop'))
             window.location.href = '/shop';
           }}
         >
-          Start Shopping
+          Shop Now
         </button>
       </div>
     </div>

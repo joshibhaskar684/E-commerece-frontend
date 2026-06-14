@@ -16,6 +16,7 @@ const [brands, setBrands] = useState(null);
 const [activeColor, setActiveColor] = useState(null);
 const [activeBrand, setActiveBrand] = useState(null);
 const [activeBrandsId, setActiveBrandsId] = useState(null);
+const [sortOption, setSortOption] = useState(null);
 
 const ClearAllFilter=()=>{
     setActiveCategory(null);
@@ -46,7 +47,7 @@ toast.error("Please select a filter")
 
     return(
         <div className="flex items-center justify-between  gap-4 p-5">
-<SortOption/>
+<SortOption setSortOption={setSortOption} sortOption={sortOption}/>
 <Filter open={open}
  setOpen={setOpen} 
  activeCategory={activeCategory} 
