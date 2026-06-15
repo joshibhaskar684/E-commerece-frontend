@@ -6,7 +6,7 @@ import { ToastContainer } from "react-toastify";
 import AiBot from "../components/ai/AiBoat";
 
 export const metadata = {
-  metadataBase: new URL("https://yourdomain.com"),
+  metadataBase: new URL("https://quicksin.in"),
 
   title: {
     default: "Quick | Modern Full Stack Ecommerce Platform",
@@ -33,7 +33,7 @@ export const metadata = {
   authors: [
     {
       name: "Bhaskar Joshi",
-      url: "https://yourdomain.com",
+      url: "https://quicksin.in",
     },
   ],
 
@@ -41,7 +41,7 @@ export const metadata = {
   publisher: "Quick",
 
   alternates: {
-    canonical: "https://yourdomain.com",
+    canonical: "https://quicksin.in",
   },
 
   robots: {

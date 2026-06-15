@@ -1,12 +1,8 @@
-import type { MetadataRoute } from "next";
-
-export default function sitemap(): MetadataRoute.Sitemap {
+export default function sitemap() {
   return [
     {
-      url: "https://quicksin.com",
+      url: "https://quicksin.in",
       lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1,
     },
   ];
 }
