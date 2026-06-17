@@ -60,7 +60,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://yourdomain.com",
+    url: "https://quicksin.in",
     siteName: "Quick",
     title: "Quick | Modern Full Stack Ecommerce Platform",
     description:

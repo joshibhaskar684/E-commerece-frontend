@@ -132,12 +132,14 @@ export default function MainHomePage(){
         <Maincarosel/>
         <CategorySection/>
         {/* <Featured/> */}
-        <ProductListComponent SectionName={"New Arrivals"} products={products} Link={"/products/10"} />
-        <ProductListComponent SectionName={"Best Sellers"} products={products} Link={"/products/10"} />
+        {/* <ProductListComponent SectionName={"New Arrivals"} products={products} Link={"/products/10"} />
+        <ProductListComponent SectionName={"Best Sellers"} products={products} Link={"/products/10"} /> */}
         {/* <Collections/> */}
-        <ProductListComponent SectionName={"Top Rated"} products={products} Link={"/products/10"} />
-        <ProductListComponent SectionName={"Trending"} products={products} Link={"/products/10"} />
-        {/* <div className='h-[900px]'></div> */}
+        {/* <ProductListComponent SectionName={"Top Rated"} products={products} Link={"/products/10"} />
+        <ProductListComponent SectionName={"Trending"} products={products} Link={"/products/10"} /> */}
+        {/* <div className='h-[900px]'>
+
+        </div> */}
         {/* <Footer/> */}
         </>
     )
