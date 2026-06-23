@@ -19,6 +19,7 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [cartProducts, setCartProducts] = useState(products);
 
+  
   // 1. Safety Check: If data is completely null or empty, show NoItemFound
   if (!cartProducts || cartProducts?.length === 0) {
     return <NoItemFound />
