@@ -24,6 +24,7 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useRouter } from "next/navigation";
+import ProductSkeleton from "@/components/Products/Skleton/ProductdetailsSkelton";
 
 export default function Page() {
   const params = useParams();
@@ -62,30 +63,9 @@ export default function Page() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 p-4 animate-pulse">
-        <div className="max-w-7xl mx-auto bg-white p-4 flex flex-col md:flex-row gap-6 rounded-sm shadow-sm">
-          {/* Left Side */}
-          <div className="w-full md:w-2/5 space-y-4">
-            <div className="h-[450px] bg-gray-200 rounded-sm" />
-            <div className="flex gap-2">
-              <div className="h-14 bg-gray-200 rounded-sm w-1/2" />
-              <div className="h-14 bg-gray-200 rounded-sm w-1/2" />
-            </div>
-          </div>
-          {/* Right Side */}
-          <div className="w-full md:w-3/5 space-y-6 pt-2">
-            <div className="h-6 w-32 bg-gray-200 rounded" />
-            <div className="h-10 w-3/4 bg-gray-200 rounded" />
-            <div className="h-6 w-48 bg-gray-200 rounded" />
-            <div className="h-12 w-64 bg-gray-200 rounded mt-6" />
-            <div className="space-y-3 pt-6 border-t">
-              <div className="h-4 w-full bg-gray-200 rounded" />
-              <div className="h-4 w-full bg-gray-200 rounded" />
-              <div className="h-4 w-3/4 bg-gray-200 rounded" />
-            </div>
-          </div>
-        </div>
-      </div>
+     <>
+     <ProductSkeleton/>
+     </>
     );
   }
 
