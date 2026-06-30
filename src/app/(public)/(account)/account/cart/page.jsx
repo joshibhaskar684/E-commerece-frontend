@@ -6,7 +6,7 @@ import { FaMinus, FaPlus, FaTrash } from 'react-icons/fa'
 import { useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetCartRequest } from '@/redux-store/Cart/action';
+import { GetCartRequest } from '@/redux-store/cart/action';
 
 
 // Assuming this comes from props, context, or an API
