@@ -242,9 +242,6 @@ dispatch(GetCartRequest({usertoken}));
 // import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 // import { XMarkIcon } from '@heroicons/react/24/outline'
 // import { FaCut, FaMinus, FaPlus } from 'react-icons/fa'
-import { Cookies } from 'js-cookie';
-import { Cookies } from 'js-cookie';
-import { useDispatch, useSelector } from 'react-redux';
 
 // const products = [
 //   {
