@@ -31,9 +31,14 @@ export const AddToCartRequest = (data) =>async (dispatch) => {
 
 export const GetCartRequest = (data) =>async (dispatch) => {
 
+    const usertoken = data?.usertoken;
     dispatch({ type: GET_CART_REQUEST });
     try{
-        const response =await axios(`${backendUrl}/cart/getuser`);
+        const response =await axios(`${backendUrl}/cart/getuser`,{
+            headers: {
+                Authorization: `Bearer ${usertoken}`
+            }
+        });
         
         dispatch({ type:GET_CART_SUCCESS, payload: response.data });
     }

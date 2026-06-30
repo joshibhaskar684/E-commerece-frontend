@@ -3,9 +3,14 @@
 import NoItemFound from '@/components/Cart/NoItemFound';
 import { useState } from 'react'
 import { FaMinus, FaPlus, FaTrash } from 'react-icons/fa'
+import { useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { useDispatch, useSelector } from 'react-redux';
+import { GetCartRequest } from '@/redux-store/Cart/action';
+
 
 // Assuming this comes from props, context, or an API
-const products = null ;
+
 
 // Helper function to safely extract numbers from price strings (e.g., "$12.99" -> 12.99)
 const getSafePrice = (priceStr) => {
@@ -17,9 +22,22 @@ const getSafePrice = (priceStr) => {
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
-  const [cartProducts, setCartProducts] = useState(products);
+  const [cartProducts, setCartProducts] = useState(()=>useSelector((state) => state?.CartReducer?.cartdata));
+const dispatch = useDispatch();
 
-  
+  useEffect(()=>{
+  const usertoken = Cookies.get('usertoken');
+dispatch(GetCartRequest({usertoken}));
+},[])
+
+
+
+
+
+
+
+
+
   // 1. Safety Check: If data is completely null or empty, show NoItemFound
   if (!cartProducts || cartProducts?.length === 0) {
     return <NoItemFound />
@@ -224,6 +242,9 @@ export default function Page() {
 // import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 // import { XMarkIcon } from '@heroicons/react/24/outline'
 // import { FaCut, FaMinus, FaPlus } from 'react-icons/fa'
+import { Cookies } from 'js-cookie';
+import { Cookies } from 'js-cookie';
+import { useDispatch, useSelector } from 'react-redux';
 
 // const products = [
 //   {

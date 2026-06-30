@@ -20,7 +20,6 @@ export const CartReducer = (state = initialState, action) => {
 
 
         case GET_CART_SUCCESS:
-          
         return { ...state, isLoading: false, cartdata: action.payload };
           case ADD_TO_CART_SUCCESS:
             case UPDATE_CART_ITEM_SUCCESS:
