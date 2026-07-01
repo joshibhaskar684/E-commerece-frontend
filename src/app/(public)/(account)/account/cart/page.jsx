@@ -22,7 +22,10 @@ const getSafePrice = (priceStr) => {
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
-  const [cartProducts, setCartProducts] = useState(()=>useSelector((state) => state?.CartReducer?.cartdata));
+  
+    const productlist=useSelector((state) => state?.CartReducer?.cartdata);
+  const [cartProducts, setCartProducts] = useState(productlist);
+    
 const dispatch = useDispatch();
 
   useEffect(()=>{
