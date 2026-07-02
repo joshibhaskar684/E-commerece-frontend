@@ -25,6 +25,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useRouter } from "next/navigation";
 import ProductSkeleton from "@/components/Products/Skleton/ProductdetailsSkelton";
+import { AddToCartRequest } from "@/redux-store/cart/action";
+import Cookies from "js-cookie";
+
+
+
 
 export default function Page() {
   const params = useParams();
@@ -52,6 +57,10 @@ export default function Page() {
       setLoading(false);
     }
   };
+  const addToCart=async()=>{
+    const token =Cookies.get("usertoken");
+    await dispatch(AddToCartRequest({id, usertoken: token}));
+  }
 
   useEffect(() => {
     fetchProductdetails();
@@ -129,6 +138,7 @@ export default function Page() {
               <div className="flex gap-2 w-full mt-4">
                 <button
                   disabled={!product?.quantity > 0}
+                  onClick={addToCart}
                   className="flex-1 py-4 bg-[#ff9f00] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold text-sm sm:text-base rounded-sm shadow-sm flex items-center justify-center gap-2"
                 >
                   <FaShoppingCart className="text-lg" />
@@ -138,6 +148,7 @@ export default function Page() {
                 <button
                   disabled={!product?.quantity > 0}
                   className="flex-1 py-4 bg-[#fb641b] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold text-sm sm:text-base rounded-sm shadow-sm flex items-center justify-center gap-2"
+                
                 >
                   <FaBolt className="text-lg" />
                   BUY NOW

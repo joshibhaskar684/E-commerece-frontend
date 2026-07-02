@@ -21,6 +21,8 @@ const getSafePrice = (priceStr) => {
 };
 
 export default function Page() {
+
+  
   const [loading, setLoading] = useState(false);
   
     const productlist=useSelector((state) => state?.CartReducer?.cartdata);

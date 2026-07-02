@@ -14,8 +14,15 @@ const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ;
 export const AddToCartRequest = (data) =>async (dispatch) => {
 
     dispatch({ type: ADD_TO_CART_REQUEST });
+    const token = data?.usertoken;
+    
     try{
-        const response =await axios(`${backendUrl}/cart/getuser`);
+        const response =await axios(`${backendUrl}/cart/getuser`,{
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            data:data
+        });
         
         dispatch({ type:ADD_TO_CART_SUCCESS, payload: response.data });
     }
