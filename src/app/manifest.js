@@ -1,6 +1,6 @@
 export default function manifest() {
   return {
-    name: 'Quick | Modern Full Stack Ecommerce Platform',
+    name: 'Quick ',
     short_name: 'Quick',
     description: 'A powerful full-stack ecommerce platform built by Bhaskar Joshi.',
     start_url: '/',
