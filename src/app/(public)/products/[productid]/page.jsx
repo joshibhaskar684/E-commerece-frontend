@@ -62,6 +62,11 @@ export default function Page() {
     await dispatch(AddToCartRequest({id, usertoken: token}));
   }
 
+  const BuyNow=async()=>{
+    const token =Cookies.get("usertoken");
+    await dispatch(AddToCartRequest({id, usertoken: token}));
+  }
+
   useEffect(() => {
     fetchProductdetails();
   }, []);
