@@ -6,26 +6,58 @@ import { useDispatch } from 'react-redux';
 
 export default function Signup({ handleClose, setPage }) {
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState({});
     const dispatch=useDispatch();
 
-    const handlesubmit = async(e) => {
+    const handlesubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
-      try { const formData = new FormData(e.target);
-        const data = {
-            
-            name: formData.get('name'),
-            mobileno: formData.get('mobile'),
-            email: formData.get('email'),
-            password: formData.get('password')
-            
-        }
-        await dispatch(RegisterUser(data));}
         
-        catch(error){
+        const formData = new FormData(e.target);
+        const name = formData.get('name');
+        const mobile = formData.get('mobile');
+        const email = formData.get('email');
+        const password = formData.get('password');
 
-        }finally{
- setLoading(false);
+        const newErrors = {};
+
+        if (!name || name.trim().length < 3) {
+            newErrors.name = "Name must be at least 3 characters long.";
+        }
+        
+        const mobileRegex = /^[0-9]{10}$/;
+        if (!mobile || !mobileRegex.test(mobile.trim())) {
+            newErrors.mobile = "Please enter a valid 10-digit mobile number.";
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email.trim())) {
+            newErrors.email = "Please enter a valid email address.";
+        }
+        
+        if (!password || password.length < 6) {
+            newErrors.password = "Password must be at least 6 characters long.";
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+        setLoading(true);
+
+        try {
+            const data = {
+                name: name.trim(),
+                mobileno: mobile.trim(),
+                email: email.trim(),
+                password: password
+            }
+            await dispatch(RegisterUser(data));
+        } catch(error) {
+            console.error("Signup error:", error);
+        } finally {
+            setLoading(false);
         }
     }
     
@@ -50,6 +82,7 @@ export default function Signup({ handleClose, setPage }) {
                             placeholder="Enter your name"
                             className="px-4 py-2 rounded-lg border border-background/40 bg-transparent text-background focus:outline-none focus:ring-2 focus:ring-yellow transition"
                         />
+                        {errors.name && <span className="text-red-500 text-xs">{errors.name}</span>}
                     </div>
 
                     <div className="flex flex-col gap-1">
@@ -61,6 +94,7 @@ export default function Signup({ handleClose, setPage }) {
                             placeholder="Enter mobile number"
                             className="px-4 py-2 rounded-lg border border-background/40 bg-transparent text-background focus:outline-none focus:ring-2 focus:ring-yellow transition"
                         />
+                        {errors.mobile && <span className="text-red-500 text-xs">{errors.mobile}</span>}
                     </div>
 
                     <div className="flex flex-col gap-1">
@@ -72,6 +106,7 @@ export default function Signup({ handleClose, setPage }) {
                             placeholder="Enter your email"
                             className="px-4 py-2 rounded-lg border border-background/40 bg-transparent text-background focus:outline-none focus:ring-2 focus:ring-yellow transition"
                         />
+                        {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
                     </div>
 
                     <div className="flex flex-col gap-1">
@@ -83,6 +118,7 @@ export default function Signup({ handleClose, setPage }) {
                             placeholder="Enter password"
                             className="px-4 py-2 rounded-lg border border-background/40 bg-transparent text-background focus:outline-none focus:ring-2 focus:ring-yellow transition"
                         />
+                        {errors.password && <span className="text-red-500 text-xs">{errors.password}</span>}
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
