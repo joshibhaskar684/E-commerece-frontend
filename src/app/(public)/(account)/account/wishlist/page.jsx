@@ -1,4 +1,19 @@
+"use client";
+
 import React from 'react';
+import Link from "next/link";
+import { 
+  User, 
+  Package, 
+  Heart, 
+  MapPin, 
+  CreditCard, 
+  Ticket, 
+  HelpCircle,
+  Trash2,
+  Star,
+  ShieldCheck
+} from "lucide-react";
 
 // Dummy data for wishlist items
 const wishlistItems = [
@@ -38,103 +53,144 @@ const wishlistItems = [
 ];
 
 export default function WishlistPage() {
+  const menuItems = [
+    { name: "My Orders", href: "/account/orders", icon: Package },
+    { name: "Wishlist", href: "/account/wishlist", icon: Heart },
+    { name: "Saved Addresses", href: "/account/addresses", icon: MapPin },
+    { name: "Payment Methods", href: "/account/payment-methods", icon: CreditCard },
+    { name: "Coupons", href: "/account/coupons", icon: Ticket },
+    { name: "Help Center", href: "/account/help-center", icon: HelpCircle },
+  ];
+
   return (
-    <div className="bg-gray-100 min-h-screen p-2 sm:p-4 md:py-8 font-sans text-gray-800">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-950 dark:text-zinc-50 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
+      <div className="max-w-6xl mx-auto space-y-8">
         
-        {/* Left Sidebar (Typical E-commerce Account Layout) */}
-        <div className="hidden md:flex flex-col w-[280px] gap-4 shrink-0">
-          {/* User Profile Summary */}
-          <div className="bg-white p-4 shadow-sm rounded-sm flex items-center gap-4">
-            <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <svg className="w-6 h-6 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-              </svg>
+        {/* PAGE HEADER */}
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm overflow-hidden p-6 sm:p-8">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-zinc-100 dark:bg-zinc-800 rounded-full">
+              <Heart className="h-8 w-8 text-rose-500" />
             </div>
             <div>
-              <p className="text-xs text-gray-500">Hello,</p>
-              <p className="font-semibold text-gray-800">Flipkart Customer</p>
-            </div>
-          </div>
-
-          {/* Account Menu */}
-          <div className="bg-white shadow-sm rounded-sm flex flex-col">
-            <div className="p-4 border-b border-gray-100">
-              <span className="text-gray-500 font-medium uppercase text-sm flex items-center gap-3">
-                {/* Order Icon */}
-                <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-                My Orders
-              </span>
-            </div>
-            <div className="p-4 border-b border-gray-100">
-              <span className="text-gray-500 font-medium uppercase text-sm flex items-center gap-3">
-                {/* Account Icon */}
-                <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                Account Settings
-              </span>
-            </div>
-            <div className="p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-500 font-medium text-sm flex items-center gap-3">
-               {/* Heart Icon */}
-               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" /></svg>
-               My Wishlist
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                My Wishlist
+              </h1>
+              <p className="text-zinc-500 dark:text-zinc-400 font-medium mt-1">
+                {wishlistItems.length} {wishlistItems.length === 1 ? 'item' : 'items'} saved
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Main Content - Wishlist Items */}
-        <div className="flex-1 bg-white shadow-sm rounded-sm">
-          {/* Header */}
-          <div className="p-4 border-b border-gray-200">
-            <h1 className="text-lg font-semibold">My Wishlist ({wishlistItems.length})</h1>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          
+          {/* SIDEBAR NAVIGATION */}
+          <div className="lg:col-span-1 space-y-1">
+            <h2 className="px-4 text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 uppercase mb-3">
+              Account
+            </h2>
+            <nav className="flex flex-col space-y-1">
+              {menuItems.map((item, i) => {
+                const Icon = item.icon;
+                const isActive = item.name === "Wishlist";
+                return (
+                  <Link
+                    key={i}
+                    href={item.href}
+                    className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                      isActive 
+                        ? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50' 
+                        : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
 
-          {/* Item List */}
-          <div className="flex flex-col">
+          {/* MAIN CONTENT AREA */}
+          <div className="lg:col-span-3 space-y-6">
+            
             {wishlistItems.map((item) => (
-              <div key={item.id} className="group flex p-4 sm:p-6 border-b border-gray-200 hover:shadow-[0_3px_16px_0_rgba(0,0,0,0.11)] transition-shadow duration-200 relative">
-                
-                {/* Delete Button (Trash Icon) */}
-                <button className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
+              <div 
+                key={item.id} 
+                className="group flex flex-col sm:flex-row gap-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all relative"
+              >
+                {/* Delete Button */}
+                <button 
+                  className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                  aria-label="Remove from wishlist"
+                >
+                  <Trash2 className="w-5 h-5" />
                 </button>
 
                 {/* Product Image */}
-                <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 flex justify-center items-start">
-                  <img src={item.image} alt={item.title} className="max-h-full max-w-full object-contain" />
+                <div className="w-full sm:w-40 h-40 shrink-0 bg-zinc-50 dark:bg-zinc-800 rounded-lg flex justify-center items-center overflow-hidden border border-zinc-100 dark:border-zinc-800/50">
+                  <img 
+                    src={item.image} 
+                    alt={item.title} 
+                    className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal" 
+                  />
                 </div>
 
                 {/* Product Details */}
-                <div className="ml-4 sm:ml-8 flex-1 pr-8">
-                  <h2 className="text-sm sm:text-base hover:text-blue-600 cursor-pointer line-clamp-2">{item.title}</h2>
+                <div className="flex-1 flex flex-col pt-1 pr-8">
+                  <h2 className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100 hover:text-zinc-700 dark:hover:text-zinc-300 cursor-pointer line-clamp-2 leading-tight">
+                    {item.title}
+                  </h2>
                   
                   {/* Ratings */}
-                  <div className="flex items-center gap-2 mt-1 sm:mt-2">
-                    <span className="bg-green-600 text-white text-xs font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
+                  <div className="flex flex-wrap items-center gap-3 mt-3">
+                    <span className="inline-flex items-center gap-1 bg-green-600/10 text-green-700 dark:text-green-400 px-2 py-0.5 rounded text-xs font-bold border border-green-600/20">
                       {item.rating}
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                      <Star className="w-3 h-3 fill-current" />
                     </span>
-                    <span className="text-gray-500 text-sm">({item.reviews})</span>
+                    <span className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">
+                      {item.reviews} reviews
+                    </span>
                     {item.assured && (
-                      <span className="ml-2 hidden sm:inline-block">
-                        <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/fa_62673a.png" alt="Assured" className="h-5" />
+                      <span className="inline-flex items-center gap-1 bg-zinc-900 dark:bg-zinc-100 text-zinc-50 dark:text-zinc-900 px-2 py-0.5 rounded text-xs font-bold">
+                        <ShieldCheck className="w-3 h-3" />
+                        Assured
                       </span>
                     )}
                   </div>
 
+                  <div className="flex-1"></div>
+
                   {/* Pricing */}
-                  <div className="mt-3 flex items-baseline gap-2 sm:gap-3">
-                    <span className="text-lg sm:text-2xl font-medium">{item.price}</span>
-                    <span className="text-sm text-gray-500 line-through">{item.originalPrice}</span>
-                    <span className="text-sm text-green-600 font-medium">{item.discount}</span>
+                  <div className="mt-6 flex flex-wrap items-baseline gap-3">
+                    <span className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+                      {item.price}
+                    </span>
+                    <span className="text-sm text-zinc-500 dark:text-zinc-400 line-through font-medium">
+                      {item.originalPrice}
+                    </span>
+                    <span className="text-sm text-green-600 dark:text-green-400 font-bold tracking-tight">
+                      {item.discount}
+                    </span>
                   </div>
                 </div>
               </div>
             ))}
+
+            {wishlistItems.length === 0 && (
+              <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-12 text-center shadow-sm">
+                <Heart className="w-12 h-12 text-zinc-300 dark:text-zinc-700 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Your wishlist is empty</h3>
+                <p className="text-zinc-500 dark:text-zinc-400 mt-2">Save items you want to buy later.</p>
+                <Link href="/products" className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 disabled:pointer-events-none disabled:opacity-50 bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 shadow h-10 px-6 py-2 mt-6">
+                  Continue Shopping
+                </Link>
+              </div>
+            )}
+            
           </div>
         </div>
-
       </div>
     </div>
   );

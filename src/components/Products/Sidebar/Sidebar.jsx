@@ -46,7 +46,7 @@ toast.error("Please select a filter")
 
 
     return(
-        <div className="flex items-center justify-between  gap-4 p-5">
+        <div className="flex items-center justify-end gap-3">
 <SortOption setSortOption={setSortOption} sortOption={sortOption}/>
 <Filter open={open}
  setOpen={setOpen} 

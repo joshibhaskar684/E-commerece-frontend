@@ -66,51 +66,54 @@ handleProductLoading();
     };
 
     return (
-        <>
-         <div className="bg-background ">
-       <div className="sticky top-32 z-1 bg-background">
-       <Sidebar sortOption={sortOption} setSortOption={setSortOption} />
-       </div>
-        <div className="grid grid-cols-1 gap-5">
-            <div className="w-full">
-<h1 className="font-bold text-2xl p-5"> Products </h1>
+        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-950 dark:text-zinc-50 pb-12 transition-colors duration-200">
+          
+          {/* Header & Sidebar Controls */}
+          <div className="bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-16 sm:top-[72px] z-10 shadow-sm">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 gap-4">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Products</h1>
+                <div className="flex-shrink-0">
+                  <Sidebar sortOption={sortOption} setSortOption={setSortOption} />
+                </div>
+              </div>
+            </div>
+          </div>
 
+          {/* Product Grid */}
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
+               {products?.content?.map((item, index) => (
+                   <ProductCard product={item} key={index} router={router} handleViewMore={handleViewMore} selectedId={selectedId}/>
+               ))} 
             </div>
 
-             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4  gap-5">
-
- {
-    products?.content?.map((item,index)=>(
-        <ProductCard product={item} key={index} router={router} handleViewMore={handleViewMore} selectedId={selectedId}/>
-    ))
-} 
-
+            {/* Pagination */}
+            <div className="flex justify-center mt-12 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 shadow-sm w-fit mx-auto">
+               <Pagination
+                   count={totalPage}
+                   page={pageno}
+                   onChange={handlePaginationChange}
+                   color="standard"
+                   sx={{
+                       "& .MuiPaginationItem-root": {
+                           backgroundColor: "transparent",
+                           color: "var(--foreground)", 
+                           fontWeight: 500,
+                       },
+                       "& .Mui-selected": {
+                           backgroundColor: "#18181b !important", 
+                           color: "#fff !important",
+                       },
+                       ".dark & .Mui-selected": {
+                           backgroundColor: "#fafafa !important",
+                           color: "#18181b !important",
+                       }
+                   }}
+               />
             </div>
-
-<div className="w-full grid grid-cols-1 gap-5 p-5 place-items-center ">
- <Pagination
-                           count={totalPage}
-                           page={pageno}
-                           onChange={handlePaginationChange}
-                           color="primary"
-                           sx={{
-                               "& .MuiPaginationItem-root": {
-                                   backgroundColor: "transparent",
-                                   color: "var(--foreground)", // ensures text is visible
-                               },
-                               "& .Mui-selected": {
-                                   backgroundColor: "primary.main", // selected page still colored
-                                   color: "#fff",
-                               },
-                           }}
-                       />
-             </div>
+          </div>
         </div>
-
-        
-        
-        </div>
-        </>
     )
 }
 
