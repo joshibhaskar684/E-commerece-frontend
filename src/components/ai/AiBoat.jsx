@@ -8,11 +8,14 @@ export default function AiBot(){
 
     return(
         <>
-        <button onClick={()=>setOpenModal(true)} className="cursor-pointer border bg-yellow-500 fixed bottom-5 right-5 w-12 h-12 rounded-full flex items-center justify-center">
-          <FaRobot className="text-3xl "/>
+        <button 
+          onClick={()=>setOpenModal(!openModal)} 
+          className="cursor-pointer bg-yellow-500 text-black fixed bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center z-[90] shadow-xl hover:bg-yellow-600 hover:scale-105 active:scale-95 transition-all duration-200"
+        >
+          <FaRobot className="text-2xl"/>
         </button>
 
-<AiModal openModal={openModal} setOpenModal={setOpenModal} />
+        <AiModal openModal={openModal} setOpenModal={setOpenModal} />
         </>
     )
 }

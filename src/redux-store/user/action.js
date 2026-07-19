@@ -74,13 +74,9 @@ import axios from "axios";
         dispatch({type:REGISTER_USER_SUCCESS,payload:res.data});
     }
     catch(err){
-
     toast.error(err.message);
         dispatch({type:REGISTER_USER_FAILURE,payload:err.message});
-    }finally{
-    data.setLoading(false)
-  }
-    
+    }
  }
 
    export const UpdateUser=(data)=>async(dispatch)=>{
