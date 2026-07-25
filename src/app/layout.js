@@ -1,6 +1,7 @@
 
 
 import "./globals.css";
+import "react-toastify/dist/ReactToastify.css";
 import ReduxProvider from './../redux-store/ReduxProvider/ReduxProvider';
 import { ToastContainer } from "react-toastify";
 import AiBot from "../components/ai/AiBoat";

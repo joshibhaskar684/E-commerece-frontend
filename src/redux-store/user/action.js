@@ -43,8 +43,9 @@ import axios from "axios";
         dispatch({type:LOGIN_USER_SUCCESS,payload:res.data});
     }
     catch(err){
-        toast.error(err.message);
-        dispatch({type:LOGIN_USER_FAILURE,payload:err.message});
+        const errorMsg = err.response?.data?.message || err.response?.data?.error || err.message || "Login failed";
+        toast.error(errorMsg);
+        dispatch({type:LOGIN_USER_FAILURE,payload:errorMsg});
     }
     finally{
     data.setLoading(false)
@@ -56,8 +57,9 @@ import axios from "axios";
     Cookies.remove("usertoken");  // <-- removes cookie
     dispatch({ type: LOGOUT_USER_SUCCESS, payload: data });
   } catch (err) {
-    toast.error(err.message);
-    dispatch({ type: LOGOUT_USER_FAILURE, payload:err.message });
+    const errorMsg = err.response?.data?.message || err.response?.data?.error || err.message || "Logout failed";
+    toast.error(errorMsg);
+    dispatch({ type: LOGOUT_USER_FAILURE, payload: errorMsg });
   }
 };
 
@@ -74,8 +76,9 @@ import axios from "axios";
         dispatch({type:REGISTER_USER_SUCCESS,payload:res.data});
     }
     catch(err){
-    toast.error(err.message);
-        dispatch({type:REGISTER_USER_FAILURE,payload:err.message});
+        const errorMsg = err.response?.data?.message || err.response?.data?.error || err.message || "Registration failed";
+        toast.error(errorMsg);
+        dispatch({type:REGISTER_USER_FAILURE,payload:errorMsg});
     }
  }
 
