@@ -1,5 +1,16 @@
 import { toast } from "react-toastify";
-import { GET_PRODUCT_DETAILS_FAILURE, GET_PRODUCT_DETAILS_REQUEST, GET_PRODUCT_DETAILS_SUCCESS, GET_PRODUCTS_FAILURE, GET_PRODUCTS_REQUEST, GET_PRODUCTS_SUCCESS } from "./actiontype";
+import { 
+    GET_PRODUCT_DETAILS_FAILURE, 
+    GET_PRODUCT_DETAILS_REQUEST, 
+    GET_PRODUCT_DETAILS_SUCCESS, 
+    GET_PRODUCTS_FAILURE, 
+    GET_PRODUCTS_REQUEST, 
+    GET_PRODUCTS_SUCCESS,
+    GET_SUGGESTIONS_REQUEST,
+    GET_SUGGESTIONS_SUCCESS,
+    GET_SUGGESTIONS_FAILURE,
+    CLEAR_SUGGESTIONS
+} from "./actiontype";
 
 import axios from "axios";
 
@@ -101,3 +112,24 @@ export const getProductDetailsById = (data) =>async (dispatch) => {
     }
 
 }
+
+export const getSuggestions = (query) => async (dispatch) => {
+    if (!query || !query.trim()) {
+        dispatch({ type: CLEAR_SUGGESTIONS });
+        return;
+    }
+    dispatch({ type: GET_SUGGESTIONS_REQUEST });
+    try {
+        const response = await axios.get(`${backendUrl}/products/suggestions`, {
+            params: { q: query }
+        });
+        dispatch({ type: GET_SUGGESTIONS_SUCCESS, payload: response.data });
+    } catch (error) {
+        console.error("Suggestions fetch error:", error);
+        dispatch({ type: GET_SUGGESTIONS_FAILURE, payload: error.message });
+    }
+};
+
+export const clearSuggestions = () => (dispatch) => {
+    dispatch({ type: CLEAR_SUGGESTIONS });
+};
