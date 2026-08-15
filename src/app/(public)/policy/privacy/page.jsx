@@ -1,3 +1,9 @@
+export const metadata = {
+  title: "Privacy Policy | Quick",
+  description:
+    "How Quick collects, uses, shares and protects your personal information.",
+};
+
 export default function Page() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 text-foreground">

@@ -1,3 +1,9 @@
+export const metadata = {
+  title: "Terms & Conditions | Quick",
+  description:
+    "The terms that govern your use of the Quick website and any purchase you make on it.",
+};
+
 export default function Page() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 text-foreground">
