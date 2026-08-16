@@ -325,9 +325,20 @@ export default function Page() {
             <div className="mb-8">
               <h3 className="text-lg font-semibold mb-4 flex items-center justify-between">
                 <span>Ratings & Reviews</span>
-                <button className="text-blue-600 text-sm font-semibold bg-white shadow-sm border border-gray-200 px-4 py-2 rounded-sm hover:shadow-md transition-all">
-                  Rate Product
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => router.push(`/products/reviews?productId=${id}`)}
+                    className="text-gray-700 text-xs sm:text-sm font-semibold bg-white shadow-sm border border-gray-200 px-3 py-1.5 rounded-sm hover:shadow-md transition-all"
+                  >
+                    All Reviews
+                  </button>
+                  <button
+                    onClick={() => router.push(`/products/reviews?productId=${id}&write=true`)}
+                    className="text-blue-600 text-xs sm:text-sm font-semibold bg-white shadow-sm border border-gray-200 px-3 py-1.5 rounded-sm hover:shadow-md transition-all"
+                  >
+                    Rate Product
+                  </button>
+                </div>
               </h3>
               
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 mt-6">
