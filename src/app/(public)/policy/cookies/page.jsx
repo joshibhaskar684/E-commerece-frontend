@@ -10,6 +10,15 @@ export const metadata = {
   title: "Cookie Policy | Quick",
   description:
     "The cookies Quick uses, what they are used for, and how you can control or disable them.",
+  alternates: {
+    canonical: "https://quicksin.in/policy/cookies",
+  },
+  openGraph: {
+    title: "Cookie Policy | Quick",
+    description: "The cookies Quick uses, what they are used for, and how you can control or disable them.",
+    url: "https://quicksin.in/policy/cookies",
+    siteName: "Quick",
+  },
 };
 
 export default function Page() {

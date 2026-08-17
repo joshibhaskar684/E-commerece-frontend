@@ -10,6 +10,15 @@ export const metadata = {
   title: "Cancellation Policy | Quick",
   description:
     "How to cancel a Quick order, until when cancellation is allowed, and when we may cancel an order.",
+  alternates: {
+    canonical: "https://quicksin.in/policy/cancellation",
+  },
+  openGraph: {
+    title: "Cancellation Policy | Quick",
+    description: "How to cancel a Quick order, until when cancellation is allowed, and when we may cancel an order.",
+    url: "https://quicksin.in/policy/cancellation",
+    siteName: "Quick",
+  },
 };
 
 export default function Page() {

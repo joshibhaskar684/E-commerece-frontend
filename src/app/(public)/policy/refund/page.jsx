@@ -10,6 +10,15 @@ export const metadata = {
   title: "Refund Policy | Quick",
   description:
     "How refunds are approved, the refund modes available and how long the money takes to reach you.",
+  alternates: {
+    canonical: "https://quicksin.in/policy/refund",
+  },
+  openGraph: {
+    title: "Refund Policy | Quick",
+    description: "How refunds are approved, the refund modes available and how long the money takes to reach you.",
+    url: "https://quicksin.in/policy/refund",
+    siteName: "Quick",
+  },
 };
 
 export default function Page() {

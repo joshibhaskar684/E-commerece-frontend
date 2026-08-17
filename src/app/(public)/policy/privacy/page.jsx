@@ -2,6 +2,15 @@ export const metadata = {
   title: "Privacy Policy | Quick",
   description:
     "How Quick collects, uses, shares and protects your personal information.",
+  alternates: {
+    canonical: "https://quicksin.in/policy/privacy",
+  },
+  openGraph: {
+    title: "Privacy Policy | Quick",
+    description: "How Quick collects, uses, shares and protects your personal information.",
+    url: "https://quicksin.in/policy/privacy",
+    siteName: "Quick",
+  },
 };
 
 export default function Page() {

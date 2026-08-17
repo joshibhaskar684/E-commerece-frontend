@@ -10,6 +10,15 @@ export const metadata = {
   title: "Payment & Security Policy | Quick",
   description:
     "Accepted payment methods, pricing and taxes, and the security measures Quick uses to protect your transactions.",
+  alternates: {
+    canonical: "https://quicksin.in/policy/payment-security",
+  },
+  openGraph: {
+    title: "Payment & Security Policy | Quick",
+    description: "Accepted payment methods, pricing and taxes, and the security measures Quick uses to protect your transactions.",
+    url: "https://quicksin.in/policy/payment-security",
+    siteName: "Quick",
+  },
 };
 
 export default function Page() {

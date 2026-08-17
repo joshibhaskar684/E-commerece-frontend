@@ -10,6 +10,15 @@ export const metadata = {
   title: "Shipping Policy | Quick",
   description:
     "Delivery timelines, shipping charges, tracking and undelivered order handling at Quick.",
+  alternates: {
+    canonical: "https://quicksin.in/policy/shipping",
+  },
+  openGraph: {
+    title: "Shipping Policy | Quick",
+    description: "Delivery timelines, shipping charges, tracking and undelivered order handling at Quick.",
+    url: "https://quicksin.in/policy/shipping",
+    siteName: "Quick",
+  },
 };
 
 export default function Page() {

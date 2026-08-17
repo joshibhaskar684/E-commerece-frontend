@@ -2,6 +2,15 @@ export const metadata = {
   title: "Terms & Conditions | Quick",
   description:
     "The terms that govern your use of the Quick website and any purchase you make on it.",
+  alternates: {
+    canonical: "https://quicksin.in/policy/terms",
+  },
+  openGraph: {
+    title: "Terms & Conditions | Quick",
+    description: "The terms that govern your use of the Quick website and any purchase you make on it.",
+    url: "https://quicksin.in/policy/terms",
+    siteName: "Quick",
+  },
 };
 
 export default function Page() {

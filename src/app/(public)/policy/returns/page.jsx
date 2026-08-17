@@ -10,6 +10,15 @@ export const metadata = {
   title: "Return & Exchange Policy | Quick",
   description:
     "Return window, eligibility conditions, non-returnable items and the step-by-step return process at Quick.",
+  alternates: {
+    canonical: "https://quicksin.in/policy/returns",
+  },
+  openGraph: {
+    title: "Return & Exchange Policy | Quick",
+    description: "Return window, eligibility conditions, non-returnable items and the step-by-step return process at Quick.",
+    url: "https://quicksin.in/policy/returns",
+    siteName: "Quick",
+  },
 };
 
 export default function Page() {

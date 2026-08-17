@@ -9,6 +9,15 @@ export const metadata = {
   title: "Disclaimer | Quick",
   description:
     "Limits of liability and accuracy of product information, pricing and third-party content on Quick.",
+  alternates: {
+    canonical: "https://quicksin.in/policy/disclaimer",
+  },
+  openGraph: {
+    title: "Disclaimer | Quick",
+    description: "Limits of liability and accuracy of product information, pricing and third-party content on Quick.",
+    url: "https://quicksin.in/policy/disclaimer",
+    siteName: "Quick",
+  },
 };
 
 export default function Page() {

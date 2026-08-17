@@ -2,9 +2,18 @@ import Link from "next/link";
 import { POLICY_LINKS, SUPPORT_EMAIL } from "./_components/PolicyUI";
 
 export const metadata = {
-  title: "Policies | Quick",
+  title: "Store Policies | Quick",
   description:
     "All Quick store policies — privacy, terms, shipping, returns, refunds, cancellation, cookies, payments and disclaimer.",
+  alternates: {
+    canonical: "https://quicksin.in/policy",
+  },
+  openGraph: {
+    title: "Store Policies | Quick",
+    description: "All Quick store policies — privacy, terms, shipping, returns, refunds, cancellation, cookies, payments and disclaimer.",
+    url: "https://quicksin.in/policy",
+    siteName: "Quick",
+  },
 };
 
 const DESCRIPTIONS = {
