@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProducts, getProductswithQuery } from "@/redux-store/products/action";
 import Sidebar from "@/components/Products/Sidebar/Sidebar";
 import ProductCard from "@/components/Products/ProductCard/ProductCard";
+import ProductNotFoundCard from "@/components/Products/ProductNotFoundCard/ProductNotFoundCard";
 
 export default function SearchClient() {
   const dispatch = useDispatch();
@@ -54,9 +55,16 @@ export default function SearchClient() {
     router.push(`?${params.toString()}`);
   };
 
+  if(!products||products?.content?.length===0){
+    return(
+      <>
+<ProductNotFoundCard/>
+      </>
+    )
+  }
   return (
     <div className="bg-background min-h-screen pb-12">
-      <div className="sticky top-32 z-1 bg-background">
+      <div className="sticky top-34 z-1 bg-background">
         <Sidebar />
       </div>
       <div className="grid grid-cols-1 gap-5 max-w-7xl mx-auto px-4">
