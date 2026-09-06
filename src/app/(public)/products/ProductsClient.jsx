@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProducts, getProductswithCategory } from "@/redux-store/products/action";
 import Sidebar from "@/components/Products/Sidebar/Sidebar";
 import ProductCard from "@/components/Products/ProductCard/ProductCard";
+import ProductNotFoundCard from "@/components/Products/ProductNotFoundCard/ProductNotFoundCard";
 
 export default function ProductsClient() {
   const dispatch = useDispatch();
@@ -55,6 +56,13 @@ export default function ProductsClient() {
     router.push(`?${params.toString()}`);
   };
 
+  if(!products||products?.content?.length===0){
+    return(
+      <>
+<ProductNotFoundCard/>
+      </>
+    )
+  }
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-950 dark:text-zinc-50 pb-12 transition-colors duration-200">
       {/* Header & Sidebar Controls */}

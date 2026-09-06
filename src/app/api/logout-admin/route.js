@@ -6,7 +6,7 @@ export async function POST() {
   response.cookies.set("admintoken", "", {
     expires: new Date(0),
     path: "/",
-    domain: ".quicksi.in", // ✅ must match original
+    domain: ".quicksin.in", // ✅ must match original
     httpOnly: false,       // match original
     secure: true,          // match original
     sameSite: "none",      // match original

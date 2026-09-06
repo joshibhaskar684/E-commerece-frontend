@@ -12,7 +12,7 @@ export default function ProductNotFoundCard() {
          {/* Modern Illustration Area */}
          <div className="flex justify-center mb-8 relative">
            <div className="bg-zinc-50 dark:bg-zinc-800 p-8 rounded-full relative ">
-             <SearchOff className="text-zinc-300 dark:text-zinc-600 w-20 h-20" />
+             {/* <SearchOff className="text-zinc-300 dark:text-zinc-600 w-20 h-20" /> */}
            </div>
            {/* Subtle Decorative Yellow Ring */}
            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border-2 border-dashed border-yellow-400 rounded-full animate-[spin_10s_linear_infinite]" />
@@ -37,12 +37,7 @@ export default function ProductNotFoundCard() {
              Continue Shopping
            </button>
           
-           <button 
-             onClick={() => window.location.reload()}
-             className="border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-foreground font-bold uppercase text-xs tracking-wider px-8 py-3.5 rounded-sm transition-all"
-           >
-             Clear Filters
-           </button>
+           
          </div>
 
          {/* Helpful Hint */}

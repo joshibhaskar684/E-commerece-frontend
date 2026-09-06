@@ -56,8 +56,8 @@ export default function Navbar({ tokenPresent }) {
   const LoginData = LoginMenuData;
   const NavData = [
     { label: "Home", link: "/" },
-    { label: "Products", link: "/products" },
-    { label: "Categories", link: "/categories" },
+    { label: "Products", link: "/products?pageno=1&pagesize=0" },
+    { label: "Categories", link: "/categories?pageno=1&pagesize=12" },
   ];
 
   return (
