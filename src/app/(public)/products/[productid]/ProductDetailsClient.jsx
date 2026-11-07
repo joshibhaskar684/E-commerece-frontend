@@ -19,13 +19,23 @@ import {
   FaTruck,
   FaShoppingCart,
   FaBolt,
-  FaTag
+  FaTag,
+  FaMinus,
+  FaPlus,
+  FaShoppingBag,
+  FaTimes,
+  FaCheckCircle
 } from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useRouter } from "next/navigation";
 import ProductSkeleton from "@/components/Products/Skleton/ProductdetailsSkelton";
-import { AddToCartRequest } from "@/redux-store/cart/action";
+import { 
+  AddToCartRequest, 
+  UpdateCartItemRequest, 
+  RemoveCartItemRequest, 
+  GetCartRequest 
+} from "@/redux-store/cart/action";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 
@@ -39,12 +49,36 @@ export default function ProductDetailsClient() {
   const [loading, setLoading] = useState(true);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isBuyingNow, setIsBuyingNow] = useState(false);
+  const [isUpdatingCart, setIsUpdatingCart] = useState(false);
+  const [showCartModal, setShowCartModal] = useState(false);
 
   const product = useSelector(
     (state) => state.ProductReducer.productdata
   );
+  const cartData = useSelector(
+    (state) => state?.CartReducer?.cartdata
+  );
 
   const products = [];
+
+  // Fetch cart data on mount if user is authenticated
+  useEffect(() => {
+    const token = Cookies.get("usertoken");
+    if (token) {
+      dispatch(GetCartRequest({ usertoken: token }));
+    }
+  }, [dispatch]);
+
+  // Extract cart status for current product
+  const cartItems = cartData?.items || (Array.isArray(cartData) ? cartData : []);
+  const currentProductId = product?.id || product?._id || id;
+  const cartItem = cartItems.find((item) => {
+    const pId = item?.productId || item?.id || item?._id;
+    return pId && currentProductId && String(pId) === String(currentProductId);
+  });
+  const isInCart = Boolean(cartItem && cartItem.quantity > 0);
+  const cartQuantity = cartItem?.quantity || 0;
+  const totalCartCount = cartItems.reduce((acc, item) => acc + (item?.quantity || 1), 0);
 
   const fetchProductdetails = async () => {
     setLoading(true);
@@ -75,7 +109,7 @@ export default function ProductDetailsClient() {
 
     setIsAddingToCart(true);
     try {
-      await dispatch(
+      const res = await dispatch(
         AddToCartRequest({
           productId: item.id || item._id || id,
           quantity: 1,
@@ -85,10 +119,62 @@ export default function ProductDetailsClient() {
           usertoken: token,
         })
       );
+      if (res?.success) {
+        setShowCartModal(true);
+      }
     } catch (error) {
       console.error("Error adding to cart:", error);
     } finally {
       setIsAddingToCart(false);
+    }
+  };
+
+  const handleUpdateQuantity = async (changeType) => {
+    const token = Cookies.get("usertoken");
+    if (!token) {
+      toast.error("Please login first to update cart");
+      return;
+    }
+
+    if (changeType === 'inc') {
+      if (product?.quantity && cartQuantity >= product.quantity) {
+        toast.warn(`Cannot add more. Only ${product.quantity} items available in stock.`);
+        return;
+      }
+      setIsUpdatingCart(true);
+      try {
+        await dispatch(
+          UpdateCartItemRequest({
+            productId: currentProductId,
+            quantity: cartQuantity + 1,
+            usertoken: token,
+          })
+        );
+      } finally {
+        setIsUpdatingCart(false);
+      }
+    } else {
+      setIsUpdatingCart(true);
+      try {
+        if (cartQuantity <= 1) {
+          await dispatch(
+            RemoveCartItemRequest({
+              productId: currentProductId,
+              usertoken: token,
+            })
+          );
+        } else {
+          await dispatch(
+            UpdateCartItemRequest({
+              productId: currentProductId,
+              quantity: cartQuantity - 1,
+              usertoken: token,
+            })
+          );
+        }
+      } finally {
+        setIsUpdatingCart(false);
+      }
     }
   };
 
@@ -204,17 +290,53 @@ export default function ProductDetailsClient() {
 
               {/* Action Buttons */}
               <div className="flex gap-2 w-full mt-4">
-                <button
-                  disabled={!product?.quantity || product?.quantity <= 0 || isAddingToCart || isBuyingNow}
-                  onClick={() => addToCart(product)}
-                  className="flex-1 py-4 bg-[#ff9f00] hover:bg-[#f39700] active:scale-[0.99] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold text-sm sm:text-base rounded-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
-                >
-                  <FaShoppingCart className={`text-lg ${isAddingToCart ? "animate-pulse" : ""}`} />
-                  {isAddingToCart ? "ADDING..." : "ADD TO CART"}
-                </button>
+                {isInCart ? (
+                  <div className="flex-1 py-1.5 px-2 sm:px-3 bg-[#ff9f00] text-white font-bold rounded-sm shadow-sm flex items-center justify-between gap-1 sm:gap-2">
+                    <button
+                      onClick={() => handleUpdateQuantity('dec')}
+                      disabled={isUpdatingCart}
+                      className="w-9 h-9 bg-black/15 hover:bg-black/25 active:scale-95 rounded-sm flex items-center justify-center transition-colors cursor-pointer disabled:opacity-40"
+                      aria-label="Decrease quantity"
+                    >
+                      <FaMinus className="text-xs" />
+                    </button>
+
+                    <div className="flex flex-col items-center">
+                      <span className="text-[10px] uppercase tracking-wider text-white/80 font-medium leading-none">
+                        In Cart
+                      </span>
+                      <span className="text-base sm:text-lg font-bold leading-tight select-none">
+                        {isUpdatingCart ? <span className="animate-spin text-xs">⌛</span> : cartQuantity}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => handleUpdateQuantity('inc')}
+                      disabled={isUpdatingCart || (product?.quantity && cartQuantity >= product?.quantity)}
+                      className={`w-9 h-9 rounded-sm flex items-center justify-center transition-colors ${
+                        product?.quantity && cartQuantity >= product?.quantity
+                          ? 'bg-black/5 opacity-40 cursor-not-allowed'
+                          : 'bg-black/15 hover:bg-black/25 active:scale-95 cursor-pointer'
+                      }`}
+                      aria-label="Increase quantity"
+                      title={product?.quantity && cartQuantity >= product?.quantity ? `Maximum stock (${product.quantity}) reached` : "Increase quantity"}
+                    >
+                      <FaPlus className="text-xs" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    disabled={!product?.quantity || product?.quantity <= 0 || isAddingToCart || isBuyingNow}
+                    onClick={() => addToCart(product)}
+                    className="flex-1 py-4 bg-[#ff9f00] hover:bg-[#f39700] active:scale-[0.99] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold text-sm sm:text-base rounded-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  >
+                    <FaShoppingCart className={`text-lg ${isAddingToCart ? "animate-pulse" : ""}`} />
+                    {isAddingToCart ? "ADDING..." : "ADD TO CART"}
+                  </button>
+                )}
 
                 <button
-                  disabled={!product?.quantity || product?.quantity <= 0 || isAddingToCart || isBuyingNow}
+                  disabled={!product?.quantity || product?.quantity <= 0 || isAddingToCart || isBuyingNow || isUpdatingCart}
                   onClick={BuyNow}
                   className="flex-1 py-4 bg-[#fb641b] hover:bg-[#e85a14] active:scale-[0.99] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold text-sm sm:text-base rounded-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
@@ -222,6 +344,46 @@ export default function ProductDetailsClient() {
                   {isBuyingNow ? "BUYING..." : "BUY NOW"}
                 </button>
               </div>
+
+              {/* View Cart Notification Banner - Shown ONLY if this product is in user's cart */}
+              {isInCart && (
+                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-sm shadow-xs flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-11 h-11 rounded border border-gray-200 bg-white p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                      <img
+                        src={cartItem?.productImage || product?.images?.[0] || '/placeholder-image.jpg'}
+                        alt={product?.name || 'Product'}
+                        className="max-h-full max-w-full object-contain"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-blue-900 truncate flex items-center gap-1">
+                        <FaCheckCircle className="text-emerald-600 text-[11px] shrink-0" />
+                        In Your Cart
+                      </p>
+                      <p className="text-[11px] text-gray-600">
+                        <span className="font-semibold text-gray-900">{cartQuantity}</span> of this item ({totalCartCount} total in cart)
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={() => setShowCartModal(true)}
+                      className="px-2.5 py-1.5 text-xs text-blue-700 hover:text-blue-900 font-semibold underline underline-offset-2 cursor-pointer"
+                    >
+                      Details
+                    </button>
+                    <button
+                      onClick={() => router.push('/account/cart')}
+                      className="px-3.5 py-1.5 bg-[#2874f0] hover:bg-[#1b63d9] active:scale-95 text-white text-xs font-bold rounded-sm shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                    >
+                      <FaShoppingBag className="text-xs" />
+                      VIEW CART
+                    </button>
+                  </div>
+                </div>
+              )}
 
             </div>
           </div>
@@ -465,6 +627,87 @@ export default function ProductDetailsClient() {
         </div>
 
       </div>
+
+      {/* View Cart Modal - Shown when item is added or user clicks Details, ONLY if in user's cart */}
+      {showCartModal && isInCart && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 relative border border-gray-100 animate-in zoom-in-95 duration-150">
+            {/* Close Button */}
+            <button
+              onClick={() => setShowCartModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+              aria-label="Close modal"
+            >
+              <FaTimes size={16} />
+            </button>
+
+            {/* Success Header */}
+            <div className="flex items-center gap-2 text-emerald-600 font-bold text-base mb-4 pb-3 border-b border-gray-100">
+              <FaCheckCircle className="text-xl shrink-0" />
+              <span>Added to Your Shopping Cart</span>
+            </div>
+
+            {/* Product Snapshot */}
+            <div className="flex gap-4 items-center bg-gray-50 p-3.5 rounded-md border border-gray-100 mb-5">
+              <div className="w-16 h-16 rounded bg-white border border-gray-200 p-1.5 shrink-0 flex items-center justify-center overflow-hidden">
+                <img
+                  src={cartItem?.productImage || product?.images?.[0] || '/placeholder-image.jpg'}
+                  alt={product?.name || 'Product'}
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h4 className="text-sm font-semibold text-gray-900 truncate">
+                  {product?.name}
+                </h4>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Unit Price: <span className="font-bold text-gray-800">₹{product?.price}</span>
+                </p>
+                <p className="text-xs text-gray-600 font-medium mt-1">
+                  Quantity in Cart:{' '}
+                  <span className="font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                    {cartQuantity}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            {/* Cart Overview */}
+            <div className="bg-blue-50/50 rounded-md p-3.5 border border-blue-100 text-xs text-gray-700 mb-6 space-y-1.5">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Items in Cart:</span>
+                <span className="font-bold text-gray-900">{totalCartCount} items</span>
+              </div>
+              <div className="flex justify-between text-sm pt-1 border-t border-blue-100">
+                <span className="font-semibold text-gray-800">Current Item Subtotal:</span>
+                <span className="font-extrabold text-[#2874f0]">
+                  ₹{(product?.price * cartQuantity).toLocaleString('en-IN')}
+                </span>
+              </div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => setShowCartModal(false)}
+                className="flex-1 py-3 px-4 border border-gray-300 hover:bg-gray-100 text-gray-700 text-sm font-semibold rounded-sm transition-colors cursor-pointer"
+              >
+                Continue Shopping
+              </button>
+              <button
+                onClick={() => {
+                  setShowCartModal(false);
+                  router.push('/account/cart');
+                }}
+                className="flex-1 py-3 px-4 bg-[#2874f0] hover:bg-[#1b63d9] text-white text-sm font-bold rounded-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <FaShoppingBag />
+                VIEW CART
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
