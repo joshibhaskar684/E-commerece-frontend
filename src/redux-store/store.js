@@ -1,25 +1,18 @@
-// import { CartReducer } from "./cart/reducer";
-// import { OrderReducer } from "./Order/reducer";
-// // import { ProductReducer } from "./products/reducer";
-// import { UserReducer } from "./user/reducer";
-
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { CartReducer } from "./cart/reducer";
+import { OrderReducer } from "./Order/reducer";
 import { CategoriesReducer } from "./Categories/reducer";
 import { ProductReducer } from "./products/reducer";
 import UserReducer from "./user/reducer";
 
-const { combineReducers, configureStore } = require("@reduxjs/toolkit");
-
-const rootReducer=combineReducers({
-    UserReducer:UserReducer,
-    CategoriesReducer:CategoriesReducer,
-    ProductReducer:ProductReducer,
-
-// ProductReducer:ProductReducer,
-// CartReducer:CartReducer,
-// OrderReducer:OrderReducer,
-
+const rootReducer = combineReducers({
+  UserReducer: UserReducer,
+  CategoriesReducer: CategoriesReducer,
+  ProductReducer: ProductReducer,
+  CartReducer: CartReducer,
+  OrderReducer: OrderReducer,
 });
 
-export const store=configureStore({
-    reducer:rootReducer,
+export const store = configureStore({
+  reducer: rootReducer,
 });

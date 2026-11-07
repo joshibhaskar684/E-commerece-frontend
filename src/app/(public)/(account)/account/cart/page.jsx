@@ -24,7 +24,7 @@ import {
   ClearCartRequest 
 } from '@/redux-store/cart/action';
 
-// Helper function to safely extract numbers from price strings or numbers
+// Helper function to safely extract numbers from price
 const getSafePrice = (priceVal) => {
   if (priceVal === undefined || priceVal === null) return 0;
   if (typeof priceVal === 'number') return priceVal;
@@ -41,13 +41,42 @@ const formatCurrency = (amount) => {
   })}`;
 };
 
+// Robust extractor for cart items array from any response shape
+const extractItems = (data) => {
+  if (!data) return [];
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data.items)) return data.items;
+  if (data.data && Array.isArray(data.data.items)) return data.data.items;
+  if (Array.isArray(data.data)) return data.data;
+  if (data.cart && Array.isArray(data.cart.items)) return data.cart.items;
+  if (typeof data === 'string') {
+    try {
+      const parsed = JSON.parse(data);
+      return extractItems(parsed);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
+
+// Robust extractor for summary object
+const extractSummary = (data) => {
+  if (!data) return null;
+  if (data.summary) return data.summary;
+  if (data.data?.summary) return data.data.summary;
+  if (data.cart?.summary) return data.cart.summary;
+  return null;
+};
+
 export default function CartPage() {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const cartData = useSelector((state) => state?.CartReducer?.cartdata);
+  const reduxCartData = useSelector((state) => state?.CartReducer?.cartdata);
   const isGlobalLoading = useSelector((state) => state?.CartReducer?.isLoading);
 
+  const [localCartData, setLocalCartData] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
   const [updatingItems, setUpdatingItems] = useState({});
   const [isClearing, setIsClearing] = useState(false);
@@ -57,21 +86,34 @@ export default function CartPage() {
   useEffect(() => {
     const usertoken = Cookies.get('usertoken');
     if (usertoken) {
-      dispatch(GetCartRequest({ usertoken })).finally(() => {
-        setInitialLoading(false);
-      });
+      dispatch(GetCartRequest({ usertoken }))
+        .then((res) => {
+          if (res?.data) {
+            setLocalCartData(res.data);
+          }
+        })
+        .finally(() => {
+          setInitialLoading(false);
+        });
     } else {
       setInitialLoading(false);
     }
   }, [dispatch]);
 
-  // Extract items and summary from backend Cart response
-  const items = cartData?.items || (Array.isArray(cartData) ? cartData : []);
-  const summary = cartData?.summary || null;
+  // Sync redux state into local state whenever redux state updates
+  useEffect(() => {
+    if (reduxCartData) {
+      setLocalCartData(reduxCartData);
+    }
+  }, [reduxCartData]);
 
-  // Calculate fallbacks if summary is missing
+  const activeCart = localCartData || reduxCartData;
+  const items = extractItems(activeCart);
+  const summary = extractSummary(activeCart);
+
+  // Calculations for summary with fallback to items
   const calculatedSubtotal = items.reduce((acc, item) => {
-    const price = getSafePrice(item?.price);
+    const price = getSafePrice(item?.price ?? item?.priceAtAddTime);
     const qty = item?.quantity || 1;
     return acc + price * qty;
   }, 0);
@@ -97,20 +139,36 @@ export default function CartPage() {
     const newQuantity = changeType === 'inc' ? currentQuantity + 1 : currentQuantity - 1;
 
     if (newQuantity < 1) {
-      // Remove item if decremented below 1
       handleRemove(productId);
       return;
     }
 
+    // Optimistic UI update
+    setLocalCartData((prev) => {
+      if (!prev) return prev;
+      const currentItems = extractItems(prev);
+      const updatedItems = currentItems.map((i) => {
+        const pId = i.productId || i.id || i._id;
+        return pId === productId ? { ...i, quantity: newQuantity } : i;
+      });
+      return {
+        ...prev,
+        items: updatedItems,
+      };
+    });
+
     setUpdatingItems((prev) => ({ ...prev, [productId]: true }));
     try {
-      await dispatch(
+      const res = await dispatch(
         UpdateCartItemRequest({
           productId,
           quantity: newQuantity,
           usertoken,
         })
       );
+      if (res?.data) {
+        setLocalCartData(res.data);
+      }
     } finally {
       setUpdatingItems((prev) => ({ ...prev, [productId]: false }));
     }
@@ -124,14 +182,31 @@ export default function CartPage() {
       return;
     }
 
+    // Optimistic remove
+    setLocalCartData((prev) => {
+      if (!prev) return prev;
+      const currentItems = extractItems(prev);
+      const updatedItems = currentItems.filter((i) => {
+        const pId = i.productId || i.id || i._id;
+        return pId !== productId;
+      });
+      return {
+        ...prev,
+        items: updatedItems,
+      };
+    });
+
     setUpdatingItems((prev) => ({ ...prev, [productId]: true }));
     try {
-      await dispatch(
+      const res = await dispatch(
         RemoveCartItemRequest({
           productId,
           usertoken,
         })
       );
+      if (res?.data) {
+        setLocalCartData(res.data);
+      }
     } finally {
       setUpdatingItems((prev) => ({ ...prev, [productId]: false }));
     }
@@ -146,7 +221,12 @@ export default function CartPage() {
 
     setIsClearing(true);
     try {
-      await dispatch(ClearCartRequest({ usertoken }));
+      const res = await dispatch(ClearCartRequest({ usertoken }));
+      if (res?.data) {
+        setLocalCartData(res.data);
+      } else {
+        setLocalCartData({ items: [], summary: { subTotal: 0, discount: 0, deliveryFee: 0, tax: 0, totalAmount: 0 } });
+      }
     } finally {
       setIsClearing(false);
     }
@@ -218,7 +298,7 @@ export default function CartPage() {
             <button
               onClick={handleClearCart}
               disabled={isClearing || isGlobalLoading}
-              className="text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 border border-red-200 px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5 disabled:opacity-50"
+              className="text-xs sm:text-sm font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 border border-red-200 px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
             >
               <FaTrash size={12} />
               {isClearing ? 'Clearing...' : 'Clear Cart'}
@@ -238,12 +318,12 @@ export default function CartPage() {
           {/* Cart Items Container */}
           <div className="w-full lg:w-2/3 flex flex-col gap-4">
             {items.map((item, index) => {
-              const productId = item?.productId || item?.id || `cart-item-${index}`;
+              const productId = item?.productId || item?.id || item?._id || `cart-item-${index}`;
               const itemQuantity = item?.quantity || 1;
-              const unitPrice = getSafePrice(item?.price);
+              const unitPrice = getSafePrice(item?.price ?? item?.priceAtAddTime);
               const itemTotal = unitPrice * itemQuantity;
               const isUpdating = !!updatingItems[productId];
-              const imageSrc = item?.productImage || item?.imageSrc || '/placeholder-image.jpg';
+              const imageSrc = item?.productImage || item?.imageSrc || item?.images?.[0] || '/placeholder-image.jpg';
               const productName = item?.productName || item?.name || 'Quick Product';
 
               return (
@@ -288,7 +368,7 @@ export default function CartPage() {
                         <button 
                           onClick={() => handleRemove(productId)}
                           disabled={isUpdating}
-                          className="flex-shrink-0 p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors focus:outline-none disabled:opacity-50"
+                          className="flex-shrink-0 p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors focus:outline-none disabled:opacity-50 cursor-pointer"
                           title="Remove item"
                           aria-label="Remove item"
                         >
@@ -307,7 +387,7 @@ export default function CartPage() {
                           <button 
                             onClick={() => handleQuantity(productId, itemQuantity, 'dec')}
                             disabled={isUpdating}
-                            className="p-2 text-gray-600 hover:text-black hover:bg-gray-200 transition-colors disabled:opacity-40 rounded-l-md"
+                            className="p-2 text-gray-600 hover:text-black hover:bg-gray-200 transition-colors disabled:opacity-40 rounded-l-md cursor-pointer"
                             aria-label="Decrease quantity"
                           >
                             <FaMinus size={11} />
@@ -324,7 +404,7 @@ export default function CartPage() {
                           <button 
                             onClick={() => handleQuantity(productId, itemQuantity, 'inc')}
                             disabled={isUpdating}
-                            className="p-2 text-gray-600 hover:text-black hover:bg-gray-200 transition-colors disabled:opacity-40 rounded-r-md"
+                            className="p-2 text-gray-600 hover:text-black hover:bg-gray-200 transition-colors disabled:opacity-40 rounded-r-md cursor-pointer"
                             aria-label="Increase quantity"
                           >
                             <FaPlus size={11} />
@@ -385,7 +465,7 @@ export default function CartPage() {
                 {/* Tax (GST) */}
                 {tax > 0 && (
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Taxes & GST (18%)</span>
+                    <span className="text-gray-600">Taxes & GST</span>
                     <span className="font-semibold text-gray-900">{formatCurrency(tax)}</span>
                   </div>
                 )}
