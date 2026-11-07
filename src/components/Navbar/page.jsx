@@ -41,12 +41,9 @@ export default function Navbar({ tokenPresent }) {
     return [];
   }, [cartData]);
 
-  // Total quantity of items in the cart
+  // Number of items in the cart (not total quantity)
   const cartCount = useMemo(() => {
-    return cartItems.reduce((total, item) => {
-      const qty = Number(item?.quantity);
-      return total + (isNaN(qty) || qty <= 0 ? 1 : qty);
-    }, 0);
+    return cartItems.filter(item => item?.quantity === undefined || Number(item?.quantity) > 0).length;
   }, [cartItems]);
 
   // Fetch cart data on mount if token is available
@@ -141,13 +138,13 @@ export default function Navbar({ tokenPresent }) {
                     <ShoppingBagIcon className="size-5" />
                     Cart
                   </span>
-                  {cartCount > 0 ? (
+                  {/* {cartCount > 0 ? (
                     <span className="bg-[#2874f0] text-white text-xs font-bold px-2 py-0.5 rounded-full">
                       {cartCount}
                     </span>
                   ) : (
                     <span className="text-gray-400 text-sm">0</span>
-                  )}
+                  )} */}
                 </button>
               </div>
 
@@ -293,11 +290,11 @@ export default function Navbar({ tokenPresent }) {
                     aria-hidden="true"
                     className="size-6 text-foreground shrink-0 group-hover:text-[#2874f0] transition-colors"
                   />
-                  {cartCount > 0 && (
+                  {/* {cartCount > 0 && (
                     <span className="absolute -top-1.5 -right-2 bg-[#2874f0] text-white text-[10px] font-bold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center shadow-xs">
                       {cartCount > 99 ? '99+' : cartCount}
                     </span>
-                  )}
+                  )} */}
                 </div>
                 <span className={`ml-1.5 text-sm font-semibold transition-colors ${cartCount > 0 ? "text-[#2874f0] dark:text-blue-400 font-bold" : "text-foreground"}`}>
                   {cartCount}
