@@ -27,6 +27,7 @@ import { useParams, useRouter } from "next/navigation";
 import ProductSkeleton from "@/components/Products/Skleton/ProductdetailsSkelton";
 import { AddToCartRequest } from "@/redux-store/cart/action";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 export default function ProductDetailsClient() {
   const params = useParams();
@@ -36,6 +37,8 @@ export default function ProductDetailsClient() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isBuyingNow, setIsBuyingNow] = useState(false);
 
   const product = useSelector(
     (state) => state.ProductReducer.productdata
@@ -54,14 +57,77 @@ export default function ProductDetailsClient() {
       setLoading(false);
     }
   };
-  const addToCart = async () => {
+
+  const addToCart = async (productToCart) => {
+    const item = productToCart || product;
+    if (!item) return;
+
+    if (!item.quantity || item.quantity <= 0) {
+      toast.warn("This product is currently out of stock.");
+      return;
+    }
+
     const token = Cookies.get("usertoken");
-    await dispatch(AddToCartRequest({ id, usertoken: token }));
+    if (!token) {
+      toast.error("Please login first to add items to your cart");
+      return;
+    }
+
+    setIsAddingToCart(true);
+    try {
+      await dispatch(
+        AddToCartRequest({
+          productId: item.id || item._id || id,
+          quantity: 1,
+          productName: item.name,
+          productImage: item.images?.[0] || "",
+          price: item.price,
+          usertoken: token,
+        })
+      );
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   const BuyNow = async () => {
+    const item = product;
+    if (!item) return;
+
+    if (!item.quantity || item.quantity <= 0) {
+      toast.warn("This product is currently out of stock.");
+      return;
+    }
+
     const token = Cookies.get("usertoken");
-    await dispatch(AddToCartRequest({ id, usertoken: token }));
+    if (!token) {
+      toast.error("Please login first to proceed with purchase");
+      return;
+    }
+
+    setIsBuyingNow(true);
+    try {
+      const result = await dispatch(
+        AddToCartRequest({
+          productId: item.id || item._id || id,
+          quantity: 1,
+          productName: item.name,
+          productImage: item.images?.[0] || "",
+          price: item.price,
+          usertoken: token,
+        })
+      );
+
+      if (result?.success) {
+        router.push("/account/cart");
+      }
+    } catch (error) {
+      console.error("Error during buy now:", error);
+    } finally {
+      setIsBuyingNow(false);
+    }
   };
 
   useEffect(() => {
@@ -139,21 +205,21 @@ export default function ProductDetailsClient() {
               {/* Action Buttons */}
               <div className="flex gap-2 w-full mt-4">
                 <button
-                  disabled={!product?.quantity > 0}
-                  onClick={addToCart}
-                  className="flex-1 py-4 bg-[#ff9f00] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold text-sm sm:text-base rounded-sm shadow-sm flex items-center justify-center gap-2"
+                  disabled={!product?.quantity || product?.quantity <= 0 || isAddingToCart || isBuyingNow}
+                  onClick={() => addToCart(product)}
+                  className="flex-1 py-4 bg-[#ff9f00] hover:bg-[#f39700] active:scale-[0.99] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold text-sm sm:text-base rounded-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
-                  <FaShoppingCart className="text-lg" />
-                  ADD TO CART
+                  <FaShoppingCart className={`text-lg ${isAddingToCart ? "animate-pulse" : ""}`} />
+                  {isAddingToCart ? "ADDING..." : "ADD TO CART"}
                 </button>
 
                 <button
-                  disabled={!product?.quantity > 0}
+                  disabled={!product?.quantity || product?.quantity <= 0 || isAddingToCart || isBuyingNow}
                   onClick={BuyNow}
-                  className="flex-1 py-4 bg-[#fb641b] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold text-sm sm:text-base rounded-sm shadow-sm flex items-center justify-center gap-2"
+                  className="flex-1 py-4 bg-[#fb641b] hover:bg-[#e85a14] active:scale-[0.99] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold text-sm sm:text-base rounded-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
-                  <FaBolt className="text-lg" />
-                  BUY NOW
+                  <FaBolt className={`text-lg ${isBuyingNow ? "animate-pulse" : ""}`} />
+                  {isBuyingNow ? "BUYING..." : "BUY NOW"}
                 </button>
               </div>
 

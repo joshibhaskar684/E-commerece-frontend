@@ -31,10 +31,18 @@ export default function Page() {
 const dispatch = useDispatch();
 
 
-  useEffect(()=>{
-  const usertoken = Cookies.get('usertoken');
-dispatch(GetCartRequest({usertoken}));
-},[])
+  useEffect(() => {
+    const usertoken = Cookies.get('usertoken');
+    if (usertoken) {
+      dispatch(GetCartRequest({ usertoken }));
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (productlist) {
+      setCartProducts(Array.isArray(productlist) ? productlist : (productlist?.items || []));
+    }
+  }, [productlist]);
 
 
 
