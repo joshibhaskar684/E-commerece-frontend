@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect, useMemo } from 'react'
 import {
   Dialog,
   DialogBackdrop,
@@ -19,16 +19,51 @@ import Link from 'next/link'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { LoginMenuData } from './logindata';
+import { useDispatch, useSelector } from 'react-redux';
+import { GetCartRequest } from '@/redux-store/cart/action';
+import { CLEAR_CART_SUCCESS } from '@/redux-store/cart/actiontype';
+import Cookies from 'js-cookie';
 
 export default function Navbar({ tokenPresent }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const cartData = useSelector((state) => state?.CartReducer?.cartdata);
+
+  // Safely extract cart items
+  const cartItems = useMemo(() => {
+    if (!cartData) return [];
+    if (Array.isArray(cartData)) return cartData;
+    if (Array.isArray(cartData?.items)) return cartData.items;
+    if (Array.isArray(cartData?.data)) return cartData.data;
+    if (Array.isArray(cartData?.cart?.items)) return cartData.cart.items;
+    return [];
+  }, [cartData]);
+
+  // Total quantity of items in the cart
+  const cartCount = useMemo(() => {
+    return cartItems.reduce((total, item) => {
+      const qty = Number(item?.quantity);
+      return total + (isNaN(qty) || qty <= 0 ? 1 : qty);
+    }, 0);
+  }, [cartItems]);
+
+  // Fetch cart data on mount if token is available
+  useEffect(() => {
+    const token = Cookies.get("usertoken") || tokenPresent;
+    if (token) {
+      dispatch(GetCartRequest({ usertoken: token }));
+    }
+  }, [dispatch, tokenPresent]);
   
   const handlelogout = async () => {
     try {
       await axios.post("/api/logout", {}, {
         withCredentials: true,
       });
+      Cookies.remove("usertoken");
+      dispatch({ type: CLEAR_CART_SUCCESS, payload: null });
       router.push("/");
       router.refresh();
     } catch (error) {
@@ -44,7 +79,8 @@ export default function Navbar({ tokenPresent }) {
   const [page, setPage] = useState('');
 
   const handleCart = () => {
-    if (!tokenPresent) {
+    const token = Cookies.get("usertoken") || tokenPresent;
+    if (!token) {
       setPage("login")
       setOpenModal(true)
       toast.error("Please login first")
@@ -97,6 +133,22 @@ export default function Navbar({ tokenPresent }) {
                     {item.label}
                   </Link>
                 ))}
+                <button
+                  onClick={() => { setOpen(false); handleCart(); }}
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-md text-base font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left cursor-pointer"
+                >
+                  <span className="flex items-center gap-2">
+                    <ShoppingBagIcon className="size-5" />
+                    Cart
+                  </span>
+                  {cartCount > 0 ? (
+                    <span className="bg-[#2874f0] text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      {cartCount}
+                    </span>
+                  ) : (
+                    <span className="text-gray-400 text-sm">0</span>
+                  )}
+                </button>
               </div>
 
               <div className="border-t border-gray-200 dark:border-gray-800 px-4 py-6">
@@ -232,13 +284,24 @@ export default function Navbar({ tokenPresent }) {
               {/* Cart Button */}
               <button 
                 onClick={handleCart} 
-                className="group flex items-center justify-center rounded-md p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="group flex items-center justify-center rounded-md p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+                title={cartCount > 0 ? `${cartCount} item(s) in cart` : "Cart is empty"}
+                aria-label={`Shopping cart with ${cartCount} items`}
               >
-                <ShoppingBagIcon
-                  aria-hidden="true"
-                  className="size-6 text-foreground shrink-0"
-                />
-                <span className="ml-1.5 text-sm font-medium">0</span>
+                <div className="relative flex items-center">
+                  <ShoppingBagIcon
+                    aria-hidden="true"
+                    className="size-6 text-foreground shrink-0 group-hover:text-[#2874f0] transition-colors"
+                  />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1.5 -right-2 bg-[#2874f0] text-white text-[10px] font-bold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center shadow-xs">
+                      {cartCount > 99 ? '99+' : cartCount}
+                    </span>
+                  )}
+                </div>
+                <span className={`ml-1.5 text-sm font-semibold transition-colors ${cartCount > 0 ? "text-[#2874f0] dark:text-blue-400 font-bold" : "text-foreground"}`}>
+                  {cartCount}
+                </span>
                 <span className="sr-only">items in cart, view bag</span>
               </button>
             </div>
