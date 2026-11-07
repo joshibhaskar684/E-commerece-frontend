@@ -1,15 +1,44 @@
 import { toast } from "react-toastify";
-import { ADD_TO_CART_FAILURE, 
+import { 
+    ADD_TO_CART_FAILURE, 
     ADD_TO_CART_REQUEST,
-     ADD_TO_CART_SUCCESS, 
-     GET_CART_FAILURE,
-      GET_CART_REQUEST,
-       GET_CART_SUCCESS, REMOVE_FROM_CART_FAILURE, REMOVE_FROM_CART_REQUEST, REMOVE_FROM_CART_SUCCESS, UPDATE_CART_ITEM_FAILURE, UPDATE_CART_ITEM_REQUEST, UPDATE_CART_ITEM_SUCCESS } from "./actiontype";
+    ADD_TO_CART_SUCCESS, 
+    GET_CART_FAILURE,
+    GET_CART_REQUEST,
+    GET_CART_SUCCESS, 
+    REMOVE_FROM_CART_FAILURE, 
+    REMOVE_FROM_CART_REQUEST, 
+    REMOVE_FROM_CART_SUCCESS, 
+    UPDATE_CART_ITEM_FAILURE, 
+    UPDATE_CART_ITEM_REQUEST, 
+    UPDATE_CART_ITEM_SUCCESS,
+    CLEAR_CART_REQUEST,
+    CLEAR_CART_SUCCESS,
+    CLEAR_CART_FAILURE
+} from "./actiontype";
 
 import axios from "axios";
 
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ;
+// Helper to sanitize error message
+const sanitizeError = (error, defaultMsg = "An error occurred. Please try again.") => {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+        return "Your session has expired. Please log in again.";
+    }
+    const rawMsg = error.response?.data?.message || error.message;
+    if (rawMsg) {
+        const str = String(rawMsg);
+        if (str.includes("Exception") || str.includes("cannot be cast") || str.includes("UserPrincipal") || str.includes("Internal Server Error")) {
+            return "Session invalid. Please log in again.";
+        }
+        if (str === "Network Error") {
+            return "Network error. Please check your internet connection.";
+        }
+        return str;
+    }
+    return defaultMsg;
+};
 
 export const AddToCartRequest = (data) => async (dispatch) => {
     dispatch({ type: ADD_TO_CART_REQUEST });
@@ -55,97 +84,160 @@ export const AddToCartRequest = (data) => async (dispatch) => {
 
         return { success: true, data: response.data };
     } catch (error) {
-        let errorMsg = "Failed to add item to cart. Please try again.";
-
-        if (error.response?.status === 401 || error.response?.status === 403) {
-            errorMsg = "Your session has expired. Please login again.";
-        } else if (error.response?.data?.message) {
-            const rawMsg = String(error.response.data.message);
-            if (
-                rawMsg.includes("Exception") ||
-                rawMsg.includes("cannot be cast") ||
-                rawMsg.includes("UserPrincipal") ||
-                rawMsg.includes("Internal Server Error")
-            ) {
-                errorMsg = "Session invalid. Please login again to add items.";
-            } else {
-                errorMsg = rawMsg;
-            }
-        } else if (error.message) {
-            if (error.message === "Network Error") {
-                errorMsg = "Network error. Please check your connection and try again.";
-            } else {
-                errorMsg = error.message;
-            }
-        }
-
+        const errorMsg = sanitizeError(error, "Failed to add item to cart. Please try again.");
         toast.error(errorMsg);
-
         dispatch({
             type: ADD_TO_CART_FAILURE,
             payload: errorMsg
         });
-
         return { success: false, error: errorMsg };
     }
 };
 
+export const GetCartRequest = (data) => async (dispatch) => {
+    const usertoken = data?.usertoken;
+    if (!usertoken) {
+        dispatch({ type: GET_CART_FAILURE, payload: "User not authenticated" });
+        return { success: false, error: "User not authenticated" };
+    }
 
-
-export const GetCartRequest = (data) =>async (dispatch) => {
-
-    const usertoken = data.usertoken;
     dispatch({ type: GET_CART_REQUEST });
-    try{
-        const response = await axios.get(`${backendUrl}/cart`,{
+    try {
+        const response = await axios.get(`${backendUrl}/cart`, {
             headers: {
                 Authorization: `Bearer ${usertoken}`
             }
         });
         
-        dispatch({ type:GET_CART_SUCCESS, payload: response.data });
+        dispatch({ type: GET_CART_SUCCESS, payload: response.data });
+        return { success: true, data: response.data };
+    } catch (error) {
+        const errorMsg = sanitizeError(error, "Failed to load cart.");
+        dispatch({ type: GET_CART_FAILURE, payload: errorMsg });
+        return { success: false, error: errorMsg };
     }
-        catch(error){   
-            toast.error("Please try again."+error.message)
-        dispatch({ type:GET_CART_FAILURE, payload: error.message });
-        
-    }
+};
 
-}
+export const UpdateCartItemRequest = (data) => async (dispatch) => {
+    dispatch({ type: UPDATE_CART_ITEM_REQUEST });
+    const token = data?.usertoken;
 
-
-
-export const GetCartRequest1 = (data) =>async (dispatch) => {
-
-    dispatch({ type: GET_CART_REQUEST });
-    try{
-        const response =await axios(`${backendUrl}/cart/getuser`);
-        
-        dispatch({ type:GET_CART_SUCCESS, payload: response.data });
-    }
-        catch(error){   
-            toast.error("Please try again."+error.message)
-        dispatch({ type:GET_CART_FAILURE, payload: error.message });
-        
+    if (!token) {
+        const authMsg = "Please log in first to update cart items";
+        toast.error(authMsg);
+        dispatch({ type: UPDATE_CART_ITEM_FAILURE, payload: authMsg });
+        return { success: false, error: authMsg };
     }
 
-}
+    try {
+        const response = await axios.put(
+            `${backendUrl}/cart/item`,
+            {
+                productId: data.productId,
+                quantity: data.quantity
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
 
+        dispatch({
+            type: UPDATE_CART_ITEM_SUCCESS,
+            payload: response.data
+        });
 
-
-
-export const GetCartRequest2 = (data) =>async (dispatch) => {
-
-    dispatch({ type: GET_CART_REQUEST });
-    try{
-        const response =await axios(`${backendUrl}/cart/getuser`);
-        
-        dispatch({ type:GET_CART_SUCCESS, payload: response.data });
+        return { success: true, data: response.data };
+    } catch (error) {
+        const errorMsg = sanitizeError(error, "Failed to update item quantity");
+        toast.error(errorMsg);
+        dispatch({
+            type: UPDATE_CART_ITEM_FAILURE,
+            payload: errorMsg
+        });
+        return { success: false, error: errorMsg };
     }
-        catch(error){   
-            toast.error("Please try again."+error.message)
-        dispatch({ type:GET_CART_FAILURE, payload: error.message });
-        
+};
+
+export const RemoveCartItemRequest = (data) => async (dispatch) => {
+    dispatch({ type: REMOVE_FROM_CART_REQUEST });
+    const token = data?.usertoken;
+
+    if (!token) {
+        const authMsg = "Please log in first to remove items";
+        toast.error(authMsg);
+        dispatch({ type: REMOVE_FROM_CART_FAILURE, payload: authMsg });
+        return { success: false, error: authMsg };
     }
 
-}
+    try {
+        const response = await axios.delete(
+            `${backendUrl}/cart/item/${data.productId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        dispatch({
+            type: REMOVE_FROM_CART_SUCCESS,
+            payload: response.data
+        });
+
+        toast.success("Item removed from cart");
+        return { success: true, data: response.data };
+    } catch (error) {
+        const errorMsg = sanitizeError(error, "Failed to remove item from cart");
+        toast.error(errorMsg);
+        dispatch({
+            type: REMOVE_FROM_CART_FAILURE,
+            payload: errorMsg
+        });
+        return { success: false, error: errorMsg };
+    }
+};
+
+export const ClearCartRequest = (data) => async (dispatch) => {
+    dispatch({ type: CLEAR_CART_REQUEST });
+    const token = data?.usertoken;
+
+    if (!token) {
+        const authMsg = "Please log in first to clear your cart";
+        toast.error(authMsg);
+        dispatch({ type: CLEAR_CART_FAILURE, payload: authMsg });
+        return { success: false, error: authMsg };
+    }
+
+    try {
+        const response = await axios.delete(
+            `${backendUrl}/cart/clear`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        dispatch({
+            type: CLEAR_CART_SUCCESS,
+            payload: response.data
+        });
+
+        toast.success("Cart cleared");
+        return { success: true, data: response.data };
+    } catch (error) {
+        const errorMsg = sanitizeError(error, "Failed to clear cart");
+        toast.error(errorMsg);
+        dispatch({
+            type: CLEAR_CART_FAILURE,
+            payload: errorMsg
+        });
+        return { success: false, error: errorMsg };
+    }
+};
+
+// Aliases for backwards compatibility
+export const GetCartRequest1 = GetCartRequest;
+export const GetCartRequest2 = GetCartRequest;
