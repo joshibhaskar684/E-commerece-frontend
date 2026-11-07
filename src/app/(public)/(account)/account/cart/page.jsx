@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
@@ -81,8 +81,23 @@ export default function CartPage() {
   const [productStocks, setProductStocks] = useState({});
   const [initialLoading, setInitialLoading] = useState(true);
   const [updatingItems, setUpdatingItems] = useState({});
+  const [syncingItems, setSyncingItems] = useState({});
   const [isClearing, setIsClearing] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  // Debouncing refs to batch multiple clicks into a single backend request
+  const debounceTimers = useRef({});
+  const pendingQuantities = useRef({});
+  const confirmedCarts = useRef(null);
+
+  // Cleanup debounce timers on unmount
+  useEffect(() => {
+    return () => {
+      for (const timerId of Object.values(debounceTimers.current)) {
+        clearTimeout(timerId);
+      }
+    };
+  }, []);
 
   // Initial fetch of user's cart
   useEffect(() => {
@@ -92,6 +107,7 @@ export default function CartPage() {
         .then((res) => {
           if (res?.data) {
             setLocalCartData(res.data);
+            confirmedCarts.current = res.data;
           }
         })
         .finally(() => {
@@ -106,6 +122,7 @@ export default function CartPage() {
   useEffect(() => {
     if (reduxCartData) {
       setLocalCartData(reduxCartData);
+      confirmedCarts.current = reduxCartData;
     }
   }, [reduxCartData]);
 
@@ -154,8 +171,8 @@ export default function CartPage() {
 
   const totalItemCount = items.reduce((acc, item) => acc + (item?.quantity || 1), 0);
 
-  // 1. Update item quantity (+ / -) with strict stock limit and rollback on failure
-  const handleQuantity = async (productId, currentQuantity, changeType) => {
+  // 1. Update item quantity (+ / -) with instant UI feedback and debounced backend call
+  const handleQuantity = (productId, currentQuantity, changeType) => {
     const usertoken = Cookies.get('usertoken');
     if (!usertoken) {
       toast.error('Please login first to update cart');
@@ -164,29 +181,50 @@ export default function CartPage() {
 
     const maxStock = productStocks[productId];
 
+    // Read the current effective quantity (including any pending unsaved clicks)
+    const currentEffective = pendingQuantities.current[productId] !== undefined
+      ? pendingQuantities.current[productId]
+      : currentQuantity;
+
     // Prevent increment if known stock limit is reached
-    if (changeType === 'inc' && maxStock !== undefined && currentQuantity >= maxStock) {
+    if (changeType === 'inc' && maxStock !== undefined && currentEffective >= maxStock) {
       toast.warn(`Cannot add more. Only ${maxStock} items available in stock.`);
       return;
     }
 
-    const newQuantity = changeType === 'inc' ? currentQuantity + 1 : currentQuantity - 1;
+    let nextQuantity = changeType === 'inc' ? currentEffective + 1 : currentEffective - 1;
 
-    if (newQuantity < 1) {
+    if (maxStock !== undefined && nextQuantity > maxStock) {
+      nextQuantity = maxStock;
+    }
+
+    if (nextQuantity < 1) {
+      // Clear pending timer for this item
+      if (debounceTimers.current[productId]) {
+        clearTimeout(debounceTimers.current[productId]);
+        delete debounceTimers.current[productId];
+      }
+      delete pendingQuantities.current[productId];
+      setSyncingItems((prev) => ({ ...prev, [productId]: false }));
       handleRemove(productId);
       return;
     }
 
-    // Capture previous cart state for reverting on error
-    const previousCart = localCartData || reduxCartData;
+    // Capture initial confirmed cart state before debounce chain
+    if (!confirmedCarts.current) {
+      confirmedCarts.current = localCartData || reduxCartData;
+    }
 
-    // Optimistic UI update
+    // Store the desired quantity target
+    pendingQuantities.current[productId] = nextQuantity;
+
+    // Immediately show change in the UI (Zero lag experience)
     setLocalCartData((prev) => {
       if (!prev) return prev;
       const currentItems = extractItems(prev);
       const updatedItems = currentItems.map((i) => {
         const pId = i.productId || i.id || i._id;
-        return pId === productId ? { ...i, quantity: newQuantity } : i;
+        return pId === productId ? { ...i, quantity: nextQuantity } : i;
       });
       return {
         ...prev,
@@ -194,41 +232,61 @@ export default function CartPage() {
       };
     });
 
-    setUpdatingItems((prev) => ({ ...prev, [productId]: true }));
-    try {
-      const res = await dispatch(
-        UpdateCartItemRequest({
-          productId,
-          quantity: newQuantity,
-          usertoken,
-        })
-      );
+    // Mark item as saving/syncing
+    setSyncingItems((prev) => ({ ...prev, [productId]: true }));
 
-      if (res?.success && res?.data) {
-        setLocalCartData(res.data);
-      } else {
-        // Revert optimistic update immediately on failure
-        setLocalCartData(previousCart);
-        // If error indicates insufficient stock, record current quantity as max stock
-        if (res?.error && res.error.toLowerCase().includes('stock')) {
-          setProductStocks((prev) => ({ ...prev, [productId]: currentQuantity }));
+    // Reset debounce timer: send only ONE request after user pauses clicking (600ms)
+    if (debounceTimers.current[productId]) {
+      clearTimeout(debounceTimers.current[productId]);
+    }
+
+    debounceTimers.current[productId] = setTimeout(async () => {
+      const finalQuantity = pendingQuantities.current[productId];
+      delete debounceTimers.current[productId];
+      delete pendingQuantities.current[productId];
+
+      try {
+        const res = await dispatch(
+          UpdateCartItemRequest({
+            productId,
+            quantity: finalQuantity,
+            usertoken,
+          })
+        );
+
+        if (res?.success && res?.data) {
+          setLocalCartData(res.data);
+          confirmedCarts.current = res.data;
+        } else {
+          // Revert optimistic update immediately on failure
+          if (confirmedCarts.current) {
+            setLocalCartData(confirmedCarts.current);
+          }
+          if (res?.error && res.error.toLowerCase().includes('stock')) {
+            setProductStocks((prev) => ({ ...prev, [productId]: currentQuantity }));
+          }
+          const refreshRes = await dispatch(GetCartRequest({ usertoken }));
+          if (refreshRes?.data) {
+            setLocalCartData(refreshRes.data);
+            confirmedCarts.current = refreshRes.data;
+          }
         }
-        // Sync with backend authoritative cart state
+      } catch (err) {
+        if (confirmedCarts.current) {
+          setLocalCartData(confirmedCarts.current);
+        }
         const refreshRes = await dispatch(GetCartRequest({ usertoken }));
         if (refreshRes?.data) {
           setLocalCartData(refreshRes.data);
+          confirmedCarts.current = refreshRes.data;
+        }
+      } finally {
+        setSyncingItems((prev) => ({ ...prev, [productId]: false }));
+        if (Object.keys(debounceTimers.current).length === 0) {
+          confirmedCarts.current = null;
         }
       }
-    } catch (err) {
-      // Revert optimistic update immediately on error
-      setLocalCartData(previousCart);
-      const refreshRes = await dispatch(GetCartRequest({ usertoken }));
-      if (refreshRes?.data) {
-        setLocalCartData(refreshRes.data);
-      }
-    } finally {
-      setUpdatingItems((prev) => ({ ...prev, [productId]: false }));
-    }
+    }, 600);
   };
 
   // 2. Remove single item from cart
@@ -238,6 +296,14 @@ export default function CartPage() {
       toast.error('Please login first to modify cart');
       return;
     }
+
+    // Cancel any pending debounce timer for this item
+    if (debounceTimers.current[productId]) {
+      clearTimeout(debounceTimers.current[productId]);
+      delete debounceTimers.current[productId];
+    }
+    delete pendingQuantities.current[productId];
+    setSyncingItems((prev) => ({ ...prev, [productId]: false }));
 
     const previousCart = localCartData || reduxCartData;
 
@@ -265,6 +331,7 @@ export default function CartPage() {
       );
       if (res?.data) {
         setLocalCartData(res.data);
+        confirmedCarts.current = res.data;
       } else {
         setLocalCartData(previousCart);
       }
@@ -282,11 +349,20 @@ export default function CartPage() {
 
     if (!window.confirm('Are you sure you want to clear your cart?')) return;
 
+    // Cancel all pending timers
+    for (const timerId of Object.values(debounceTimers.current)) {
+      clearTimeout(timerId);
+    }
+    debounceTimers.current = {};
+    pendingQuantities.current = {};
+    setSyncingItems({});
+
     setIsClearing(true);
     try {
       const res = await dispatch(ClearCartRequest({ usertoken }));
       if (res?.data) {
         setLocalCartData(res.data);
+        confirmedCarts.current = res.data;
       } else {
         setLocalCartData({ items: [], summary: { subTotal: 0, discount: 0, deliveryFee: 0, tax: 0, totalAmount: 0 } });
       }
@@ -295,8 +371,29 @@ export default function CartPage() {
     }
   };
 
-  // 4. Handle checkout
-  const handleCheckOut = () => {
+  // 4. Flush any pending debounce before checkout
+  const flushPendingUpdates = async () => {
+    const usertoken = Cookies.get('usertoken');
+    const promises = [];
+    for (const [productId, timerId] of Object.entries(debounceTimers.current)) {
+      clearTimeout(timerId);
+      const qty = pendingQuantities.current[productId];
+      if (qty && usertoken) {
+        promises.push(
+          dispatch(UpdateCartItemRequest({ productId, quantity: qty, usertoken }))
+        );
+      }
+    }
+    debounceTimers.current = {};
+    pendingQuantities.current = {};
+    setSyncingItems({});
+    if (promises.length > 0) {
+      await Promise.all(promises);
+    }
+  };
+
+  // 5. Handle checkout
+  const handleCheckOut = async () => {
     const usertoken = Cookies.get('usertoken');
     if (!usertoken) {
       toast.error('Please log in first to proceed to checkout');
@@ -308,11 +405,12 @@ export default function CartPage() {
     }
 
     setIsCheckingOut(true);
+    await flushPendingUpdates();
     toast.info('Proceeding to checkout...');
     setTimeout(() => {
       setIsCheckingOut(false);
       router.push('/account/orders');
-    }, 1200);
+    }, 800);
   };
 
   // Loading skeleton state
@@ -385,7 +483,8 @@ export default function CartPage() {
               const itemQuantity = item?.quantity || 1;
               const unitPrice = getSafePrice(item?.price ?? item?.priceAtAddTime);
               const itemTotal = unitPrice * itemQuantity;
-              const isUpdating = !!updatingItems[productId];
+              const isRemoving = !!updatingItems[productId];
+              const isSyncing = !!syncingItems[productId];
               const imageSrc = item?.productImage || item?.imageSrc || item?.images?.[0] || '/placeholder-image.jpg';
               const productName = item?.productName || item?.name || 'Quick Product';
               const maxStock = productStocks[productId];
@@ -447,7 +546,7 @@ export default function CartPage() {
                         {/* Remove Button */}
                         <button 
                           onClick={() => handleRemove(productId)}
-                          disabled={isUpdating}
+                          disabled={isRemoving}
                           className="flex-shrink-0 p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors focus:outline-none disabled:opacity-50 cursor-pointer"
                           title="Remove item"
                           aria-label="Remove item"
@@ -466,7 +565,7 @@ export default function CartPage() {
                         <div className="flex items-center border border-gray-300 rounded-md bg-gray-50 shadow-xs">
                           <button 
                             onClick={() => handleQuantity(productId, itemQuantity, 'dec')}
-                            disabled={isUpdating}
+                            disabled={isRemoving}
                             className="p-2 text-gray-600 hover:text-black hover:bg-gray-200 transition-colors disabled:opacity-40 rounded-l-md cursor-pointer"
                             aria-label="Decrease quantity"
                           >
@@ -474,16 +573,12 @@ export default function CartPage() {
                           </button>
                           
                           <span className="text-sm font-semibold w-9 text-center text-gray-900 select-none">
-                            {isUpdating ? (
-                              <span className="inline-block animate-spin text-xs">⌛</span>
-                            ) : (
-                              itemQuantity
-                            )}
+                            {itemQuantity}
                           </span>
 
                           <button 
                             onClick={() => handleQuantity(productId, itemQuantity, 'inc')}
-                            disabled={isUpdating || isMaxStockReached}
+                            disabled={isRemoving || isMaxStockReached}
                             className={`p-2 transition-colors rounded-r-md ${
                               isMaxStockReached 
                                 ? 'text-gray-300 cursor-not-allowed bg-gray-100' 
@@ -495,6 +590,14 @@ export default function CartPage() {
                             <FaPlus size={11} />
                           </button>
                         </div>
+
+                        {/* Subtle saving indicator */}
+                        {isSyncing && (
+                          <span className="text-[11px] text-[#2874f0] font-medium animate-pulse ml-1.5 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#2874f0] inline-block animate-ping"></span>
+                            Saving...
+                          </span>
+                        )}
                       </div>
 
                       {/* Item Total Price */}
