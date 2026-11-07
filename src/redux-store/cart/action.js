@@ -29,6 +29,9 @@ const sanitizeError = (error, defaultMsg = "An error occurred. Please try again.
     const rawMsg = error.response?.data?.message || error.message;
     if (rawMsg) {
         const str = String(rawMsg);
+        if (str.toLowerCase().includes("insufficient") || str.toLowerCase().includes("stock")) {
+            return "Cannot add more. Maximum available product stock reached.";
+        }
         if (str.includes("Exception") || str.includes("cannot be cast") || str.includes("UserPrincipal") || str.includes("Internal Server Error")) {
             return "Session invalid. Please log in again.";
         }

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 import { 
   FaMinus, 
   FaPlus, 
@@ -77,6 +78,7 @@ export default function CartPage() {
   const isGlobalLoading = useSelector((state) => state?.CartReducer?.isLoading);
 
   const [localCartData, setLocalCartData] = useState(null);
+  const [productStocks, setProductStocks] = useState({});
   const [initialLoading, setInitialLoading] = useState(true);
   const [updatingItems, setUpdatingItems] = useState({});
   const [isClearing, setIsClearing] = useState(false);
@@ -111,6 +113,30 @@ export default function CartPage() {
   const items = extractItems(activeCart);
   const summary = extractSummary(activeCart);
 
+  // Fetch available stock for items in cart so the UI can enforce stock limits
+  useEffect(() => {
+    const fetchStocks = async () => {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+      for (const item of items) {
+        const pId = item?.productId || item?.id || item?._id;
+        if (pId && productStocks[pId] === undefined) {
+          try {
+            const res = await axios.get(`${backendUrl}/products/${pId}`);
+            if (res.data?.quantity !== undefined) {
+              setProductStocks((prev) => ({ ...prev, [pId]: res.data.quantity }));
+            }
+          } catch (e) {
+            console.error('Could not fetch stock for product', pId, e);
+          }
+        }
+      }
+    };
+
+    if (items && items.length > 0) {
+      fetchStocks();
+    }
+  }, [items]);
+
   // Calculations for summary with fallback to items
   const calculatedSubtotal = items.reduce((acc, item) => {
     const price = getSafePrice(item?.price ?? item?.priceAtAddTime);
@@ -128,11 +154,19 @@ export default function CartPage() {
 
   const totalItemCount = items.reduce((acc, item) => acc + (item?.quantity || 1), 0);
 
-  // 1. Update item quantity (+ / -)
+  // 1. Update item quantity (+ / -) with strict stock limit and rollback on failure
   const handleQuantity = async (productId, currentQuantity, changeType) => {
     const usertoken = Cookies.get('usertoken');
     if (!usertoken) {
       toast.error('Please login first to update cart');
+      return;
+    }
+
+    const maxStock = productStocks[productId];
+
+    // Prevent increment if known stock limit is reached
+    if (changeType === 'inc' && maxStock !== undefined && currentQuantity >= maxStock) {
+      toast.warn(`Cannot add more. Only ${maxStock} items available in stock.`);
       return;
     }
 
@@ -142,6 +176,9 @@ export default function CartPage() {
       handleRemove(productId);
       return;
     }
+
+    // Capture previous cart state for reverting on error
+    const previousCart = localCartData || reduxCartData;
 
     // Optimistic UI update
     setLocalCartData((prev) => {
@@ -166,8 +203,28 @@ export default function CartPage() {
           usertoken,
         })
       );
-      if (res?.data) {
+
+      if (res?.success && res?.data) {
         setLocalCartData(res.data);
+      } else {
+        // Revert optimistic update immediately on failure
+        setLocalCartData(previousCart);
+        // If error indicates insufficient stock, record current quantity as max stock
+        if (res?.error && res.error.toLowerCase().includes('stock')) {
+          setProductStocks((prev) => ({ ...prev, [productId]: currentQuantity }));
+        }
+        // Sync with backend authoritative cart state
+        const refreshRes = await dispatch(GetCartRequest({ usertoken }));
+        if (refreshRes?.data) {
+          setLocalCartData(refreshRes.data);
+        }
+      }
+    } catch (err) {
+      // Revert optimistic update immediately on error
+      setLocalCartData(previousCart);
+      const refreshRes = await dispatch(GetCartRequest({ usertoken }));
+      if (refreshRes?.data) {
+        setLocalCartData(refreshRes.data);
       }
     } finally {
       setUpdatingItems((prev) => ({ ...prev, [productId]: false }));
@@ -181,6 +238,8 @@ export default function CartPage() {
       toast.error('Please login first to modify cart');
       return;
     }
+
+    const previousCart = localCartData || reduxCartData;
 
     // Optimistic remove
     setLocalCartData((prev) => {
@@ -206,7 +265,11 @@ export default function CartPage() {
       );
       if (res?.data) {
         setLocalCartData(res.data);
+      } else {
+        setLocalCartData(previousCart);
       }
+    } catch (err) {
+      setLocalCartData(previousCart);
     } finally {
       setUpdatingItems((prev) => ({ ...prev, [productId]: false }));
     }
@@ -325,6 +388,8 @@ export default function CartPage() {
               const isUpdating = !!updatingItems[productId];
               const imageSrc = item?.productImage || item?.imageSrc || item?.images?.[0] || '/placeholder-image.jpg';
               const productName = item?.productName || item?.name || 'Quick Product';
+              const maxStock = productStocks[productId];
+              const isMaxStockReached = maxStock !== undefined && itemQuantity >= maxStock;
 
               return (
                 <div 
@@ -362,6 +427,21 @@ export default function CartPage() {
                               {formatCurrency(unitPrice)}
                             </span>
                           </div>
+
+                          {/* Stock status indicator */}
+                          {maxStock !== undefined && (
+                            <div className="mt-1">
+                              {isMaxStockReached ? (
+                                <span className="inline-flex items-center text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                                  Max stock available ({maxStock}) reached
+                                </span>
+                              ) : (
+                                <span className="text-xs text-gray-500">
+                                  {maxStock} available in stock
+                                </span>
+                              )}
+                            </div>
+                          )}
                         </div>
                         
                         {/* Remove Button */}
@@ -403,8 +483,13 @@ export default function CartPage() {
 
                           <button 
                             onClick={() => handleQuantity(productId, itemQuantity, 'inc')}
-                            disabled={isUpdating}
-                            className="p-2 text-gray-600 hover:text-black hover:bg-gray-200 transition-colors disabled:opacity-40 rounded-r-md cursor-pointer"
+                            disabled={isUpdating || isMaxStockReached}
+                            className={`p-2 transition-colors rounded-r-md ${
+                              isMaxStockReached 
+                                ? 'text-gray-300 cursor-not-allowed bg-gray-100' 
+                                : 'text-gray-600 hover:text-black hover:bg-gray-200 cursor-pointer'
+                            }`}
+                            title={isMaxStockReached ? `Maximum available stock (${maxStock}) reached` : 'Increase quantity'}
                             aria-label="Increase quantity"
                           >
                             <FaPlus size={11} />
