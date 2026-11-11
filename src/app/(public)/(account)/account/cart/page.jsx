@@ -165,7 +165,7 @@ export default function CartPage() {
   const discount = summary?.discount || 0;
   const deliveryFee = summary?.deliveryFee || 0;
   const tax = summary?.tax !== undefined ? summary.tax : 0;
-  const totalAmount = summary?.totalAmount !== undefined 
+  const totalAdmount = summary?.totalAmount !== undefined 
     ? summary.totalAmount 
     : subTotal - discount + deliveryFee + tax;
 
@@ -409,8 +409,8 @@ export default function CartPage() {
     toast.info('Proceeding to checkout...');
     setTimeout(() => {
       setIsCheckingOut(false);
-      router.push('/account/orders');
-    }, 800);
+      router.push('/account/checkout');
+    }, 400);
   };
 
   // Loading skeleton state
